@@ -1,0 +1,1245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Auth Portal</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            min-height: 100vh;
+            background:
+                linear-gradient(
+                    135deg,
+                    #4f46e5,
+                    #7c3aed,
+                    #9333ea
+                );
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            min-height: 600px;
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            box-shadow:
+                0 25px 60px rgba(0, 0, 0, 0.25);
+        }
+
+        /* LEFT SIDE */
+
+        .left {
+            background:
+                linear-gradient(
+                    145deg,
+                    #4338ca,
+                    #6d28d9
+                );
+            color: white;
+            padding: 55px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .logo {
+            font-size: 42px;
+            margin-bottom: 25px;
+        }
+
+        .left h1 {
+            font-size: 38px;
+            line-height: 1.15;
+            margin-bottom: 18px;
+        }
+
+        .left p {
+            color: rgba(255,255,255,0.82);
+            line-height: 1.7;
+            font-size: 15px;
+        }
+
+        .features {
+            margin-top: 35px;
+        }
+
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 17px;
+            font-size: 14px;
+        }
+
+        .feature-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* RIGHT SIDE */
+
+        .right {
+            padding: 45px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f3f4f6;
+            padding: 5px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            border-radius: 9px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #6b7280;
+            transition: 0.2s;
+        }
+
+        .tab.active {
+            background: white;
+            color: #4f46e5;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .form-container {
+            width: 100%;
+        }
+
+        .form-title {
+            font-size: 27px;
+            color: #111827;
+            margin-bottom: 8px;
+        }
+
+        .form-subtitle {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 17px;
+        }
+
+        label {
+            display: block;
+            color: #374151;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 7px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            font-size: 16px;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px 14px 13px 40px;
+            border: 1px solid #d1d5db;
+            border-radius: 10px;
+            font-size: 14px;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        input:focus {
+            border-color: #6366f1;
+            box-shadow:
+                0 0 0 3px rgba(99,102,241,0.1);
+        }
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-wrapper input {
+            padding-right: 45px;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            color: #6b7280;
+            font-size: 16px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            border: none;
+            border-radius: 10px;
+            padding: 14px;
+            background:
+                linear-gradient(
+                    135deg,
+                    #4f46e5,
+                    #7c3aed
+                );
+            color: white;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 5px;
+            transition: 0.2s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-1px);
+            box-shadow:
+                0 7px 18px rgba(79,70,229,0.3);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .switch-text {
+            text-align: center;
+            color: #6b7280;
+            font-size: 13px;
+            margin-top: 20px;
+        }
+
+        .switch-link {
+            color: #4f46e5;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        /* MESSAGE */
+
+        .message {
+            display: none;
+            padding: 12px 14px;
+            border-radius: 9px;
+            margin-bottom: 18px;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .message.success {
+            display: block;
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        .message.error {
+            display: block;
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        /* USER PANEL */
+
+        .user-panel {
+            display: none;
+            text-align: center;
+        }
+
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background:
+                linear-gradient(
+                    135deg,
+                    #4f46e5,
+                    #9333ea
+                );
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            font-weight: bold;
+            margin: 0 auto 18px;
+        }
+
+        .user-panel h2 {
+            color: #111827;
+            margin-bottom: 8px;
+        }
+
+        .user-panel p {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+
+        .logout-btn {
+            border: none;
+            padding: 12px 25px;
+            border-radius: 9px;
+            background: #fee2e2;
+            color: #dc2626;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* RESPONSIVE */
+
+        @media (max-width: 800px) {
+
+            .container {
+                grid-template-columns: 1fr;
+                max-width: 500px;
+            }
+
+            .left {
+                padding: 35px;
+                text-align: center;
+            }
+
+            .left h1 {
+                font-size: 30px;
+            }
+
+            .features {
+                display: none;
+            }
+
+            .right {
+                padding: 35px;
+            }
+        }
+
+        @media (max-width: 450px) {
+
+            body {
+                padding: 10px;
+            }
+
+            .left {
+                padding: 30px 20px;
+            }
+
+            .right {
+                padding: 25px 20px;
+            }
+
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- LEFT -->
+
+    <div class="left">
+
+        <div class="logo">
+            🔐
+        </div>
+
+        <h1>
+            Welcome to<br>
+            Auth Portal
+        </h1>
+
+        <p>
+            Create your account and securely access
+            your application. Simple, fast and easy.
+        </p>
+
+        <div class="features">
+
+            <div class="feature">
+                <div class="feature-icon">✓</div>
+                Secure registration
+            </div>
+
+            <div class="feature">
+                <div class="feature-icon">✓</div>
+                Simple login system
+            </div>
+
+            <div class="feature">
+                <div class="feature-icon">✓</div>
+                Spring Boot REST API
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- RIGHT -->
+
+    <div class="right">
+
+        <!-- TABS -->
+
+        <div class="tabs">
+
+            <button
+                class="tab active"
+                id="loginTab"
+                onclick="showLogin()"
+            >
+                Login
+            </button>
+
+            <button
+                class="tab"
+                id="registerTab"
+                onclick="showRegister()"
+            >
+                Register
+            </button>
+
+        </div>
+
+
+        <!-- MESSAGE -->
+
+        <div id="message" class="message"></div>
+
+
+        <!-- LOGIN -->
+
+        <div
+            id="loginFormContainer"
+            class="form-container"
+        >
+
+            <h2 class="form-title">
+                Welcome back
+            </h2>
+
+            <p class="form-subtitle">
+                Login to continue to your account.
+            </p>
+
+
+            <form id="loginForm">
+
+                <div class="form-group">
+
+                    <label>
+                        Username
+                    </label>
+
+                    <div class="input-wrapper">
+
+                        <span class="input-icon">
+                            👤
+                        </span>
+
+                        <input
+                            type="text"
+                            id="loginUsername"
+                            placeholder="Enter your username"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Password
+                    </label>
+
+                    <div class="input-wrapper password-wrapper">
+
+                        <span class="input-icon">
+                            🔒
+                        </span>
+
+                        <input
+                            type="password"
+                            id="loginPassword"
+                            placeholder="Enter your password"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            class="toggle-password"
+                            onclick="togglePassword('loginPassword', this)"
+                        >
+                            👁
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="submit-btn"
+                    id="loginButton"
+                >
+                    Login
+                </button>
+
+            </form>
+
+
+            <div class="switch-text">
+
+                Don't have an account?
+
+                <span
+                    class="switch-link"
+                    onclick="showRegister()"
+                >
+                    Create account
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- REGISTER -->
+
+        <div
+            id="registerFormContainer"
+            class="form-container"
+            style="display:none;"
+        >
+
+            <h2 class="form-title">
+                Create account
+            </h2>
+
+            <p class="form-subtitle">
+                Register a new account to get started.
+            </p>
+
+
+            <form id="registerForm">
+
+                <div class="form-group">
+
+                    <label>
+                        Full Name
+                    </label>
+
+                    <div class="input-wrapper">
+
+                        <span class="input-icon">
+                            👤
+                        </span>
+
+                        <input
+                            type="text"
+                            id="fullName"
+                            placeholder="Enter your full name"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Username
+                    </label>
+
+                    <div class="input-wrapper">
+
+                        <span class="input-icon">
+                            @
+                        </span>
+
+                        <input
+                            type="text"
+                            id="registerUsername"
+                            placeholder="3-20 characters"
+                            minlength="3"
+                            maxlength="20"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Email
+                    </label>
+
+                    <div class="input-wrapper">
+
+                        <span class="input-icon">
+                            ✉
+                        </span>
+
+                        <input
+                            type="email"
+                            id="email"
+                            placeholder="example@gmail.com"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Password
+                    </label>
+
+                    <div class="input-wrapper password-wrapper">
+
+                        <span class="input-icon">
+                            🔒
+                        </span>
+
+                        <input
+                            type="password"
+                            id="registerPassword"
+                            placeholder="Minimum 6 characters"
+                            minlength="6"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            class="toggle-password"
+                            onclick="togglePassword('registerPassword', this)"
+                        >
+                            👁
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="submit-btn"
+                    id="registerButton"
+                >
+                    Create Account
+                </button>
+
+            </form>
+
+
+            <div class="switch-text">
+
+                Already have an account?
+
+                <span
+                    class="switch-link"
+                    onclick="showLogin()"
+                >
+                    Login
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- USER PANEL -->
+
+        <div
+            id="userPanel"
+            class="user-panel"
+        >
+
+            <div
+                class="user-avatar"
+                id="userAvatar"
+            >
+                U
+            </div>
+
+            <h2 id="welcomeName">
+                Welcome!
+            </h2>
+
+            <p id="welcomeUsername">
+                You are successfully logged in.
+            </p>
+
+            <button
+                class="logout-btn"
+                onclick="logout()"
+            >
+                Logout
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    /*
+     * AUTH API
+     *
+     * Register:
+     * POST http://localhost:8080/api/auth/register
+     *
+     * Login:
+     * POST http://localhost:8080/api/auth/login
+     */
+
+    const API_URL =
+        "http://localhost:8080/api/auth";
+
+
+    // -----------------------------------------
+    // SHOW LOGIN
+    // -----------------------------------------
+
+    function showLogin() {
+
+        document
+            .getElementById("loginFormContainer")
+            .style.display = "block";
+
+        document
+            .getElementById("registerFormContainer")
+            .style.display = "none";
+
+        document
+            .getElementById("loginTab")
+            .classList.add("active");
+
+        document
+            .getElementById("registerTab")
+            .classList.remove("active");
+
+        clearMessage();
+
+    }
+
+
+    // -----------------------------------------
+    // SHOW REGISTER
+    // -----------------------------------------
+
+    function showRegister() {
+
+        document
+            .getElementById("loginFormContainer")
+            .style.display = "none";
+
+        document
+            .getElementById("registerFormContainer")
+            .style.display = "block";
+
+        document
+            .getElementById("loginTab")
+            .classList.remove("active");
+
+        document
+            .getElementById("registerTab")
+            .classList.add("active");
+
+        clearMessage();
+
+    }
+
+
+    // -----------------------------------------
+    // REGISTER
+    // -----------------------------------------
+
+    document
+        .getElementById("registerForm")
+        .addEventListener(
+            "submit",
+            async function(event) {
+
+                event.preventDefault();
+
+
+                const button =
+                    document.getElementById(
+                        "registerButton"
+                    );
+
+                button.disabled = true;
+                button.textContent =
+                    "Creating account...";
+
+
+                const user = {
+
+                    username:
+                        document
+                            .getElementById(
+                                "registerUsername"
+                            )
+                            .value
+                            .trim(),
+
+                    password:
+                        document
+                            .getElementById(
+                                "registerPassword"
+                            )
+                            .value,
+
+                    fullName:
+                        document
+                            .getElementById(
+                                "fullName"
+                            )
+                            .value
+                            .trim(),
+
+                    email:
+                        document
+                            .getElementById(
+                                "email"
+                            )
+                            .value
+                            .trim()
+
+                };
+
+
+                try {
+
+                    const response =
+                        await fetch(
+                            `${API_URL}/register`,
+                            {
+                                method: "POST",
+
+                                headers: {
+                                    "Content-Type":
+                                        "application/json"
+                                },
+
+                                body:
+                                    JSON.stringify(user)
+                            }
+                        );
+
+
+                    const data =
+                        await response.json();
+
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            formatErrors(data)
+                        );
+
+                    }
+
+
+                    showMessage(
+                        "Registration successful! You can now login.",
+                        "success"
+                    );
+
+
+                    document
+                        .getElementById("registerForm")
+                        .reset();
+
+
+                    setTimeout(
+                        showLogin,
+                        1200
+                    );
+
+
+                } catch (error) {
+
+                    showMessage(
+                        error.message,
+                        "error"
+                    );
+
+                } finally {
+
+                    button.disabled = false;
+
+                    button.textContent =
+                        "Create Account";
+
+                }
+
+            }
+        );
+
+
+    // -----------------------------------------
+    // LOGIN
+    // -----------------------------------------
+
+    document
+        .getElementById("loginForm")
+        .addEventListener(
+            "submit",
+            async function(event) {
+
+                event.preventDefault();
+
+
+                const button =
+                    document.getElementById(
+                        "loginButton"
+                    );
+
+                button.disabled = true;
+                button.textContent =
+                    "Logging in...";
+
+
+                const loginData = {
+
+                    username:
+                        document
+                            .getElementById(
+                                "loginUsername"
+                            )
+                            .value
+                            .trim(),
+
+                    password:
+                        document
+                            .getElementById(
+                                "loginPassword"
+                            )
+                            .value
+
+                };
+
+
+                try {
+
+                    const response =
+                        await fetch(
+                            `${API_URL}/login`,
+                            {
+                                method: "POST",
+
+                                headers: {
+                                    "Content-Type":
+                                        "application/json"
+                                },
+
+                                body:
+                                    JSON.stringify(loginData)
+                            }
+                        );
+
+
+                    const data =
+                        await response.json();
+
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            formatErrors(data)
+                        );
+
+                    }
+
+
+                    showMessage(
+                        "Login successful!",
+                        "success"
+                    );
+
+
+                    showUserPanel(data);
+
+
+                } catch (error) {
+
+                    showMessage(
+                        error.message,
+                        "error"
+                    );
+
+                } finally {
+
+                    button.disabled = false;
+
+                    button.textContent =
+                        "Login";
+
+                }
+
+            }
+        );
+
+
+    // -----------------------------------------
+    // SHOW USER PANEL
+    // -----------------------------------------
+
+    function showUserPanel(data) {
+
+        document
+            .getElementById(
+                "loginFormContainer"
+            )
+            .style.display = "none";
+
+        document
+            .getElementById(
+                "registerFormContainer"
+            )
+            .style.display = "none";
+
+        document
+            .querySelector(".tabs")
+            .style.display = "none";
+
+        document
+            .getElementById(
+                "userPanel"
+            )
+            .style.display = "block";
+
+
+        const username =
+            data.username || "User";
+
+        const fullName =
+            data.fullName || username;
+
+
+        document
+            .getElementById(
+                "welcomeName"
+            )
+            .textContent =
+                `Welcome, ${fullName}!`;
+
+
+        document
+            .getElementById(
+                "welcomeUsername"
+            )
+            .textContent =
+                `Logged in as @${username}`;
+
+
+        document
+            .getElementById(
+                "userAvatar"
+            )
+            .textContent =
+                username
+                    .charAt(0)
+                    .toUpperCase();
+
+    }
+
+
+    // -----------------------------------------
+    // LOGOUT
+    // -----------------------------------------
+
+    function logout() {
+
+        document
+            .getElementById(
+                "userPanel"
+            )
+            .style.display = "none";
+
+        document
+            .querySelector(".tabs")
+            .style.display = "flex";
+
+        document
+            .getElementById(
+                "loginForm"
+            )
+            .reset();
+
+        showLogin();
+
+        showMessage(
+            "You have been logged out.",
+            "success"
+        );
+
+    }
+
+
+    // -----------------------------------------
+    // PASSWORD VISIBILITY
+    // -----------------------------------------
+
+    function togglePassword(
+        inputId,
+        button
+    ) {
+
+        const input =
+            document.getElementById(
+                inputId
+            );
+
+
+        if (input.type === "password") {
+
+            input.type = "text";
+
+            button.textContent = "🙈";
+
+        } else {
+
+            input.type = "password";
+
+            button.textContent = "👁";
+
+        }
+
+    }
+
+
+    // -----------------------------------------
+    // DISPLAY MESSAGE
+    // -----------------------------------------
+
+    function showMessage(
+        message,
+        type
+    ) {
+
+        const element =
+            document.getElementById(
+                "message"
+            );
+
+
+        element.textContent = message;
+
+        element.className =
+            `message ${type}`;
+
+    }
+
+
+    function clearMessage() {
+
+        const element =
+            document.getElementById(
+                "message"
+            );
+
+        element.textContent = "";
+
+        element.className =
+            "message";
+
+    }
+
+
+    // -----------------------------------------
+    // FORMAT BACKEND ERRORS
+    // -----------------------------------------
+
+    function formatErrors(data) {
+
+        if (!data) {
+            return "Something went wrong.";
+        }
+
+
+        if (data.error) {
+            return data.error;
+        }
+
+
+        if (typeof data === "object") {
+
+            return Object
+                .entries(data)
+                .map(
+                    ([field, message]) =>
+                        `${field}: ${message}`
+                )
+                .join(" | ");
+
+        }
+
+
+        return "Something went wrong.";
+
+    }
+
+</script>
+
+</body>
+</html>

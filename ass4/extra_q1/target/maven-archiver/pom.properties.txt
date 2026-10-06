@@ -1,0 +1,3 @@
+artifactId=erp-system
+groupId=com.sadp
+version=1.0

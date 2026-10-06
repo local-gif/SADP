@@ -1,0 +1,1837 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>ERP Management System</title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+
+        body {
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            background: #f4f7fb;
+
+            color: #1f2937;
+
+            min-height: 100vh;
+        }
+
+
+        /* ================= HEADER ================= */
+
+        header {
+            background:
+                linear-gradient(
+                    135deg,
+                    #1e3a8a,
+                    #2563eb
+                );
+
+            color: white;
+
+            padding: 25px 30px;
+
+            box-shadow:
+                0 4px 15px
+                rgba(0,0,0,0.12);
+        }
+
+
+        .header-inner {
+            max-width: 1250px;
+
+            margin: auto;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+        }
+
+
+        .brand h1 {
+            font-size: 28px;
+
+            margin-bottom: 5px;
+        }
+
+
+        .brand p {
+            font-size: 13px;
+
+            opacity: 0.85;
+        }
+
+
+        .server-status {
+            background:
+                rgba(255,255,255,0.15);
+
+            padding: 9px 15px;
+
+            border-radius: 30px;
+
+            font-size: 13px;
+        }
+
+
+        /* ================= MAIN ================= */
+
+        main {
+            max-width: 1250px;
+
+            margin: 30px auto;
+
+            padding: 0 20px;
+        }
+
+
+        /* ================= STATS ================= */
+
+        .stats {
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 18px;
+
+            margin-bottom: 25px;
+        }
+
+
+        .stat {
+            background: white;
+
+            border-radius: 15px;
+
+            padding: 20px;
+
+            box-shadow:
+                0 3px 15px
+                rgba(0,0,0,0.06);
+        }
+
+
+        .stat-label {
+            color: #6b7280;
+
+            font-size: 13px;
+
+            margin-bottom: 8px;
+        }
+
+
+        .stat-value {
+            font-size: 28px;
+
+            font-weight: bold;
+
+            color: #1e3a8a;
+        }
+
+
+        /* ================= NAV ================= */
+
+        .nav {
+            display: flex;
+
+            gap: 8px;
+
+            margin-bottom: 25px;
+
+            flex-wrap: wrap;
+        }
+
+
+        .nav button {
+            background: white;
+
+            color: #374151;
+
+            border: 1px solid #e5e7eb;
+
+            padding: 11px 18px;
+
+            border-radius: 9px;
+
+            cursor: pointer;
+
+            font-weight: 600;
+        }
+
+
+        .nav button.active {
+            background: #2563eb;
+
+            color: white;
+
+            border-color: #2563eb;
+        }
+
+
+        /* ================= PANELS ================= */
+
+        .panel {
+            background: white;
+
+            border-radius: 17px;
+
+            padding: 25px;
+
+            margin-bottom: 25px;
+
+            box-shadow:
+                0 3px 18px
+                rgba(0,0,0,0.06);
+        }
+
+
+        .panel h2 {
+            font-size: 20px;
+
+            margin-bottom: 5px;
+        }
+
+
+        .panel-subtitle {
+            color: #6b7280;
+
+            font-size: 13px;
+
+            margin-bottom: 20px;
+        }
+
+
+        /* ================= FORM ================= */
+
+        .form-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, 1fr);
+
+            gap: 18px;
+        }
+
+
+        .form-group {
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 7px;
+        }
+
+
+        .form-group label {
+            font-size: 13px;
+
+            font-weight: 600;
+
+            color: #374151;
+        }
+
+
+        .form-group input,
+        .form-group select {
+            padding: 12px 14px;
+
+            border:
+                1px solid #dbe1ea;
+
+            border-radius: 9px;
+
+            outline: none;
+
+            font-size: 14px;
+        }
+
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #2563eb;
+
+            box-shadow:
+                0 0 0 3px
+                rgba(37,99,235,0.1);
+        }
+
+
+        .form-actions {
+            margin-top: 20px;
+
+            display: flex;
+
+            gap: 10px;
+        }
+
+
+        .btn {
+            border: none;
+
+            border-radius: 9px;
+
+            padding: 11px 18px;
+
+            cursor: pointer;
+
+            font-weight: 600;
+        }
+
+
+        .btn-primary {
+            background: #2563eb;
+
+            color: white;
+        }
+
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+
+
+        .btn-secondary {
+            background: #e5e7eb;
+
+            color: #374151;
+        }
+
+
+        .btn-danger {
+            background: #fee2e2;
+
+            color: #dc2626;
+        }
+
+
+        /* ================= TABLE ================= */
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+
+        table {
+            width: 100%;
+
+            border-collapse: collapse;
+        }
+
+
+        th {
+            background: #f8fafc;
+
+            color: #6b7280;
+
+            text-align: left;
+
+            padding: 13px;
+
+            font-size: 12px;
+
+            text-transform: uppercase;
+        }
+
+
+        td {
+            padding: 14px 13px;
+
+            border-top:
+                1px solid #eef0f4;
+
+            font-size: 14px;
+        }
+
+
+        tr:hover {
+            background: #f8fafc;
+        }
+
+
+        .stock {
+            font-weight: bold;
+
+            color: #16a34a;
+        }
+
+
+        .low-stock {
+            color: #dc2626;
+
+            font-weight: bold;
+        }
+
+
+        .badge {
+            display: inline-block;
+
+            padding: 5px 9px;
+
+            border-radius: 20px;
+
+            font-size: 11px;
+
+            font-weight: bold;
+        }
+
+
+        .badge-blue {
+            background: #dbeafe;
+
+            color: #1d4ed8;
+        }
+
+
+        /* ================= EMPTY ================= */
+
+        .empty {
+            text-align: center;
+
+            padding: 50px;
+
+            color: #6b7280;
+        }
+
+
+        .empty-icon {
+            font-size: 45px;
+
+            margin-bottom: 10px;
+        }
+
+
+        /* ================= TOAST ================= */
+
+        .toast {
+            position: fixed;
+
+            right: 25px;
+
+            bottom: 25px;
+
+            background: #111827;
+
+            color: white;
+
+            padding: 14px 20px;
+
+            border-radius: 10px;
+
+            opacity: 0;
+
+            transform:
+                translateY(20px);
+
+            pointer-events: none;
+
+            transition: 0.3s;
+
+            z-index: 9999;
+        }
+
+
+        .toast.show {
+            opacity: 1;
+
+            transform:
+                translateY(0);
+        }
+
+
+        .toast.success {
+            background: #16a34a;
+        }
+
+
+        .toast.error {
+            background: #dc2626;
+        }
+
+
+        /* ================= RESPONSIVE ================= */
+
+        @media (max-width: 900px) {
+
+            .stats {
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+        }
+
+
+        @media (max-width: 650px) {
+
+            .header-inner {
+                flex-direction: column;
+
+                align-items: flex-start;
+
+                gap: 15px;
+            }
+
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <div class="header-inner">
+
+        <div class="brand">
+
+            <h1>
+                🏢 ERP Management System
+            </h1>
+
+            <p>
+                Product Inventory & Sales Management
+            </p>
+
+        </div>
+
+
+        <div class="server-status">
+            🟢 Server: localhost:8080
+        </div>
+
+    </div>
+
+</header>
+
+
+<main>
+
+
+    <!-- ================= STATISTICS ================= -->
+
+    <section class="stats">
+
+        <div class="stat">
+
+            <div class="stat-label">
+                Total Products
+            </div>
+
+            <div
+                class="stat-value"
+                id="totalProducts"
+            >
+                0
+            </div>
+
+        </div>
+
+
+        <div class="stat">
+
+            <div class="stat-label">
+                Total Stock
+            </div>
+
+            <div
+                class="stat-value"
+                id="totalStock"
+            >
+                0
+            </div>
+
+        </div>
+
+
+        <div class="stat">
+
+            <div class="stat-label">
+                Total Sales
+            </div>
+
+            <div
+                class="stat-value"
+                id="totalSales"
+            >
+                0
+            </div>
+
+        </div>
+
+
+        <div class="stat">
+
+            <div class="stat-label">
+                Total Revenue
+            </div>
+
+            <div
+                class="stat-value"
+                id="totalRevenue"
+            >
+                ₹0
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= NAVIGATION ================= -->
+
+    <div class="nav">
+
+        <button
+            class="active"
+            onclick="showSection('products', this)"
+        >
+            📦 Products
+        </button>
+
+
+        <button
+            onclick="showSection('addProduct', this)"
+        >
+            ➕ Add Product
+        </button>
+
+
+        <button
+            onclick="showSection('sale', this)"
+        >
+            💰 Make Sale
+        </button>
+
+
+        <button
+            onclick="showSection('sales', this)"
+        >
+            📊 Sales
+        </button>
+
+    </div>
+
+
+    <!-- ================= PRODUCTS ================= -->
+
+    <section
+        id="products"
+        class="panel"
+    >
+
+        <h2>
+            Product Inventory
+        </h2>
+
+        <p class="panel-subtitle">
+            Current products and available stock
+        </p>
+
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>ID</th>
+
+                        <th>Product</th>
+
+                        <th>Quantity</th>
+
+                        <th>Price</th>
+
+                        <th>Stock Status</th>
+
+                        <th>Action</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="productTable">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= ADD PRODUCT ================= -->
+
+    <section
+        id="addProduct"
+        class="panel"
+        style="display:none;"
+    >
+
+        <h2>
+            Add Product
+        </h2>
+
+        <p class="panel-subtitle">
+            Add a new product to inventory
+        </p>
+
+
+        <form id="productForm">
+
+            <div class="form-grid">
+
+
+                <div class="form-group">
+
+                    <label>
+                        Product ID
+                    </label>
+
+                    <input
+                        type="number"
+                        id="productId"
+                        placeholder="Example: 101"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Product Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="productName"
+                        placeholder="Example: Laptop"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Quantity
+                    </label>
+
+                    <input
+                        type="number"
+                        id="productQuantity"
+                        placeholder="Example: 50"
+                        min="0"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Price
+                    </label>
+
+                    <input
+                        type="number"
+                        id="productPrice"
+                        placeholder="Example: 50000"
+                        min="0"
+                        step="0.01"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="form-actions">
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    Add Product
+                </button>
+
+
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    onclick="resetProductForm()"
+                >
+                    Clear
+                </button>
+
+            </div>
+
+        </form>
+
+    </section>
+
+
+    <!-- ================= SALE ================= -->
+
+    <section
+        id="sale"
+        class="panel"
+        style="display:none;"
+    >
+
+        <h2>
+            Make Sale
+        </h2>
+
+        <p class="panel-subtitle">
+            Sell a product from available inventory
+        </p>
+
+
+        <form id="saleForm">
+
+            <div class="form-grid">
+
+
+                <div class="form-group">
+
+                    <label>
+                        Sale ID
+                    </label>
+
+                    <input
+                        type="number"
+                        id="saleId"
+                        placeholder="Example: 1"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Product
+                    </label>
+
+                    <select
+                        id="saleProduct"
+                        required
+                    >
+
+                        <option value="">
+                            Select Product
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Quantity
+                    </label>
+
+                    <input
+                        type="number"
+                        id="saleQuantity"
+                        min="1"
+                        placeholder="Example: 2"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="form-actions">
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    Complete Sale
+                </button>
+
+            </div>
+
+        </form>
+
+    </section>
+
+
+    <!-- ================= SALES ================= -->
+
+    <section
+        id="sales"
+        class="panel"
+        style="display:none;"
+    >
+
+        <h2>
+            Sales History
+        </h2>
+
+        <p class="panel-subtitle">
+            All completed sales
+        </p>
+
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>Sale ID</th>
+
+                        <th>Product ID</th>
+
+                        <th>Quantity</th>
+
+                        <th>Amount</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="salesTable">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+</main>
+
+
+<div
+    id="toast"
+    class="toast"
+></div>
+
+
+<script>
+
+    const API =
+        "http://localhost:8083/api/erp";
+
+
+    let products = [];
+
+    let sales = [];
+
+
+    // ==========================================
+    // LOAD DASHBOARD
+    // ==========================================
+
+    async function loadDashboard() {
+
+        try {
+
+            const response =
+                await fetch(
+                    API + "/dashboard"
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Dashboard error"
+                );
+
+            }
+
+
+            const data =
+                await response.json();
+
+
+            document.getElementById(
+                "totalProducts"
+            ).textContent =
+                data.totalProducts;
+
+
+            document.getElementById(
+                "totalStock"
+            ).textContent =
+                data.totalStock;
+
+
+            document.getElementById(
+                "totalSales"
+            ).textContent =
+                data.totalSales;
+
+
+            document.getElementById(
+                "totalRevenue"
+            ).textContent =
+                "₹" +
+                Number(
+                    data.totalRevenue
+                ).toLocaleString(
+                    "en-IN"
+                );
+
+
+        } catch (error) {
+
+            console.error(error);
+
+        }
+
+    }
+
+
+    // ==========================================
+    // LOAD PRODUCTS
+    // ==========================================
+
+    async function loadProducts() {
+
+        try {
+
+            const response =
+                await fetch(
+                    API + "/products"
+                );
+
+
+            products =
+                await response.json();
+
+
+            renderProducts();
+
+            updateSaleProducts();
+
+
+            loadDashboard();
+
+
+        } catch (error) {
+
+            showToast(
+                "Unable to load products",
+                "error"
+            );
+
+        }
+
+    }
+
+
+    // ==========================================
+    // DISPLAY PRODUCTS
+    // ==========================================
+
+    function renderProducts() {
+
+        const table =
+            document.getElementById(
+                "productTable"
+            );
+
+
+        if (products.length === 0) {
+
+            table.innerHTML = `
+                <tr>
+
+                    <td
+                        colspan="6"
+                        class="empty"
+                    >
+
+                        <div class="empty-icon">
+                            📦
+                        </div>
+
+                        No products available
+
+                    </td>
+
+                </tr>
+            `;
+
+            return;
+
+        }
+
+
+        table.innerHTML =
+            products.map(
+                product => {
+
+                    const lowStock =
+                        product.quantity <= 5;
+
+
+                    return `
+
+                        <tr>
+
+                            <td>
+                                ${product.id}
+                            </td>
+
+
+                            <td>
+                                <strong>
+                                    ${escapeHtml(
+                                        product.name
+                                    )}
+                                </strong>
+                            </td>
+
+
+                            <td>
+                                ${product.quantity}
+                            </td>
+
+
+                            <td>
+                                ₹${Number(
+                                    product.price
+                                ).toLocaleString(
+                                    "en-IN"
+                                )}
+                            </td>
+
+
+                            <td>
+
+                                <span
+                                    class="badge ${
+                                        lowStock
+                                            ? "badge-blue"
+                                            : "badge-blue"
+                                    }"
+                                >
+
+                                    ${
+                                        lowStock
+                                            ? "Low Stock"
+                                            : "Available"
+                                    }
+
+                                </span>
+
+                            </td>
+
+
+                            <td>
+
+                                <button
+                                    class="btn btn-danger"
+                                    onclick="deleteProduct(
+                                        ${product.id}
+                                    )"
+                                >
+                                    Delete
+                                </button>
+
+                            </td>
+
+                        </tr>
+
+                    `;
+
+                }
+            ).join("");
+
+    }
+
+
+    // ==========================================
+    // ADD PRODUCT
+    // ==========================================
+
+    document
+        .getElementById("productForm")
+        .addEventListener(
+            "submit",
+            async function(event) {
+
+                event.preventDefault();
+
+
+                const product = {
+
+                    id:
+                        Number(
+                            document
+                                .getElementById(
+                                    "productId"
+                                )
+                                .value
+                        ),
+
+                    name:
+                        document
+                            .getElementById(
+                                "productName"
+                            )
+                            .value
+                            .trim(),
+
+                    quantity:
+                        Number(
+                            document
+                                .getElementById(
+                                    "productQuantity"
+                                )
+                                .value
+                        ),
+
+                    price:
+                        Number(
+                            document
+                                .getElementById(
+                                    "productPrice"
+                                )
+                                .value
+                        )
+
+                };
+
+
+                try {
+
+                    const response =
+                        await fetch(
+                            API + "/products",
+                            {
+                                method: "POST",
+
+                                headers: {
+                                    "Content-Type":
+                                        "application/json"
+                                },
+
+                                body:
+                                    JSON.stringify(
+                                        product
+                                    )
+                            }
+                        );
+
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            "Could not add product"
+                        );
+
+                    }
+
+
+                    showToast(
+                        "Product added successfully",
+                        "success"
+                    );
+
+
+                    resetProductForm();
+
+
+                    await loadProducts();
+
+
+                    showSectionById(
+                        "products"
+                    );
+
+
+                } catch (error) {
+
+                    showToast(
+                        error.message,
+                        "error"
+                    );
+
+                }
+
+            }
+        );
+
+
+    // ==========================================
+    // DELETE PRODUCT
+    // ==========================================
+
+    async function deleteProduct(id) {
+
+        if (
+            !confirm(
+                "Delete this product?"
+            )
+        ) {
+            return;
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    API +
+                    "/products/" +
+                    id,
+                    {
+                        method: "DELETE"
+                    }
+                );
+
+
+            const result =
+                await response.text();
+
+
+            showToast(
+                result,
+                "success"
+            );
+
+
+            await loadProducts();
+
+
+        } catch (error) {
+
+            showToast(
+                "Unable to delete product",
+                "error"
+            );
+
+        }
+
+    }
+
+
+    // ==========================================
+    // UPDATE SALE PRODUCTS
+    // ==========================================
+
+    function updateSaleProducts() {
+
+        const select =
+            document.getElementById(
+                "saleProduct"
+            );
+
+
+        select.innerHTML = `
+            <option value="">
+                Select Product
+            </option>
+        `;
+
+
+        products.forEach(
+            product => {
+
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+
+                option.value =
+                    product.id;
+
+
+                option.textContent =
+                    `${product.name}
+                     (Stock: ${product.quantity})`;
+
+
+                select.appendChild(
+                    option
+                );
+
+            }
+        );
+
+    }
+
+
+    // ==========================================
+    // MAKE SALE
+    // ==========================================
+
+    document
+        .getElementById("saleForm")
+        .addEventListener(
+            "submit",
+            async function(event) {
+
+                event.preventDefault();
+
+
+                const sale = {
+
+                    id:
+                        Number(
+                            document
+                                .getElementById(
+                                    "saleId"
+                                )
+                                .value
+                        ),
+
+                    productId:
+                        Number(
+                            document
+                                .getElementById(
+                                    "saleProduct"
+                                )
+                                .value
+                        ),
+
+                    quantity:
+                        Number(
+                            document
+                                .getElementById(
+                                    "saleQuantity"
+                                )
+                                .value
+                        ),
+
+                    amount: 0
+
+                };
+
+
+                try {
+
+                    const response =
+                        await fetch(
+                            API + "/sales",
+                            {
+                                method: "POST",
+
+                                headers: {
+                                    "Content-Type":
+                                        "application/json"
+                                },
+
+                                body:
+                                    JSON.stringify(
+                                        sale
+                                    )
+                            }
+                        );
+
+
+                    const result =
+                        await response.text();
+
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            result
+                        );
+
+                    }
+
+
+                    showToast(
+                        "Sale completed successfully",
+                        "success"
+                    );
+
+
+                    document
+                        .getElementById(
+                            "saleForm"
+                        )
+                        .reset();
+
+
+                    await loadProducts();
+
+                    await loadSales();
+
+                    loadDashboard();
+
+
+                } catch (error) {
+
+                    showToast(
+                        error.message ||
+                        "Sale failed",
+                        "error"
+                    );
+
+                }
+
+            }
+        );
+
+
+    // ==========================================
+    // LOAD SALES
+    // ==========================================
+
+    async function loadSales() {
+
+        try {
+
+            const response =
+                await fetch(
+                    API + "/sales"
+                );
+
+
+            sales =
+                await response.json();
+
+
+            renderSales();
+
+
+        } catch (error) {
+
+            console.error(error);
+
+        }
+
+    }
+
+
+    // ==========================================
+    // RENDER SALES
+    // ==========================================
+
+    function renderSales() {
+
+        const table =
+            document.getElementById(
+                "salesTable"
+            );
+
+
+        if (sales.length === 0) {
+
+            table.innerHTML = `
+                <tr>
+
+                    <td
+                        colspan="4"
+                        class="empty"
+                    >
+
+                        <div class="empty-icon">
+                            📊
+                        </div>
+
+                        No sales yet
+
+                    </td>
+
+                </tr>
+            `;
+
+            return;
+
+        }
+
+
+        table.innerHTML =
+            sales.map(
+                sale => `
+
+                    <tr>
+
+                        <td>
+                            ${sale.id}
+                        </td>
+
+                        <td>
+                            ${sale.productId}
+                        </td>
+
+                        <td>
+                            ${sale.quantity}
+                        </td>
+
+                        <td>
+                            <strong>
+                                ₹${Number(
+                                    sale.amount
+                                ).toLocaleString(
+                                    "en-IN"
+                                )}
+                            </strong>
+                        </td>
+
+                    </tr>
+
+                `
+            ).join("");
+
+    }
+
+
+    // ==========================================
+    // NAVIGATION
+    // ==========================================
+
+    function showSection(
+        sectionId,
+        button
+    ) {
+
+        const sections = [
+            "products",
+            "addProduct",
+            "sale",
+            "sales"
+        ];
+
+
+        sections.forEach(
+            id => {
+
+                document.getElementById(
+                    id
+                ).style.display =
+                    id === sectionId
+                        ? "block"
+                        : "none";
+
+            }
+        );
+
+
+        document
+            .querySelectorAll(
+                ".nav button"
+            )
+            .forEach(
+                btn =>
+                    btn.classList.remove(
+                        "active"
+                    )
+            );
+
+
+        button.classList.add(
+            "active"
+        );
+
+
+        if (sectionId === "sales") {
+
+            loadSales();
+
+        }
+
+    }
+
+
+    function showSectionById(
+        sectionId
+    ) {
+
+        const sections = [
+            "products",
+            "addProduct",
+            "sale",
+            "sales"
+        ];
+
+
+        sections.forEach(
+            id => {
+
+                document.getElementById(
+                    id
+                ).style.display =
+                    id === sectionId
+                        ? "block"
+                        : "none";
+
+            }
+        );
+
+
+        document
+            .querySelectorAll(
+                ".nav button"
+            )
+            .forEach(
+                btn =>
+                    btn.classList.remove(
+                        "active"
+                    )
+            );
+
+
+        document
+            .querySelector(
+                '.nav button'
+            )
+            .classList.add(
+                "active"
+            );
+
+    }
+
+
+    // ==========================================
+    // RESET PRODUCT FORM
+    // ==========================================
+
+    function resetProductForm() {
+
+        document
+            .getElementById(
+                "productForm"
+            )
+            .reset();
+
+    }
+
+
+    // ==========================================
+    // TOAST
+    // ==========================================
+
+    function showToast(
+        message,
+        type = ""
+    ) {
+
+        const toast =
+            document.getElementById(
+                "toast"
+            );
+
+
+        toast.textContent =
+            message;
+
+
+        toast.className =
+            "toast show " + type;
+
+
+        setTimeout(
+            () => {
+
+                toast.className =
+                    "toast";
+
+            },
+            3000
+        );
+
+    }
+
+
+    // ==========================================
+    // ESCAPE HTML
+    // ==========================================
+
+    function escapeHtml(value) {
+
+        return String(value)
+            .replace(
+                /&/g,
+                "&amp;"
+            )
+            .replace(
+                /</g,
+                "&lt;"
+            )
+            .replace(
+                />/g,
+                "&gt;"
+            )
+            .replace(
+                /"/g,
+                "&quot;"
+            )
+            .replace(
+                /'/g,
+                "&#039;"
+            );
+
+    }
+
+
+    // ==========================================
+    // INITIAL LOAD
+    // ==========================================
+
+    loadProducts();
+
+    loadSales();
+
+    loadDashboard();
+
+</script>
+
+
+</body>
+
+</html>

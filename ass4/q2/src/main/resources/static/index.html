@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Inter, Arial, sans-serif;
+            background: #f4f7fb;
+            color: #1f2937;
+            min-height: 100vh;
+        }
+
+        /* ---------- HEADER ---------- */
+
+        header {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            padding: 28px 20px;
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.25);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .logo p {
+            opacity: 0.85;
+            font-size: 14px;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.15);
+            padding: 9px 14px;
+            border-radius: 30px;
+            font-size: 13px;
+        }
+
+        .status-dot {
+            width: 9px;
+            height: 9px;
+            background: #22c55e;
+            border-radius: 50%;
+        }
+
+        /* ---------- MAIN ---------- */
+
+        main {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        /* ---------- STATS ---------- */
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.06);
+        }
+
+        .stat-card span {
+            display: block;
+            color: #6b7280;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .stat-card strong {
+            font-size: 28px;
+            color: #4f46e5;
+        }
+
+        /* ---------- FORM ---------- */
+
+        .panel {
+            background: white;
+            border-radius: 18px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 3px 18px rgba(0,0,0,0.06);
+        }
+
+        .panel-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .panel-title h2 {
+            font-size: 20px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            border: 1px solid #dbe1ea;
+            border-radius: 10px;
+            padding: 12px 14px;
+            font-size: 14px;
+            outline: none;
+            transition: 0.2s;
+            background: #fff;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 90px;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        button {
+            border: none;
+            cursor: pointer;
+            border-radius: 9px;
+            padding: 11px 17px;
+            font-size: 14px;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #4338ca;
+        }
+
+        .btn-secondary {
+            background: #eef2ff;
+            color: #4f46e5;
+        }
+
+        .btn-danger {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .btn-edit {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        /* ---------- TOOLBAR ---------- */
+
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .toolbar h2 {
+            font-size: 20px;
+        }
+
+        .filters {
+            display: flex;
+            gap: 10px;
+        }
+
+        .filters select {
+            min-width: 170px;
+        }
+
+        /* ---------- TASK GRID ---------- */
+
+        .task-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+        }
+
+        .task-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.06);
+            border: 1px solid #eef0f4;
+            transition: 0.2s;
+        }
+
+        .task-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.09);
+        }
+
+        .task-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .task-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .category {
+            background: #ede9fe;
+            color: #6d28d9;
+            font-size: 11px;
+            padding: 5px 9px;
+            border-radius: 20px;
+            white-space: nowrap;
+            font-weight: 600;
+        }
+
+        .task-description {
+            color: #6b7280;
+            font-size: 14px;
+            line-height: 1.6;
+            min-height: 45px;
+            margin-bottom: 18px;
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 8px;
+            border-top: 1px solid #eef0f4;
+            padding-top: 15px;
+        }
+
+        .task-actions button {
+            flex: 1;
+            padding: 9px;
+            font-size: 12px;
+        }
+
+        /* ---------- EMPTY STATE ---------- */
+
+        .empty {
+            background: white;
+            border-radius: 16px;
+            padding: 55px 20px;
+            text-align: center;
+            color: #6b7280;
+            grid-column: 1 / -1;
+        }
+
+        .empty-icon {
+            font-size: 45px;
+            margin-bottom: 10px;
+        }
+
+        .empty h3 {
+            color: #374151;
+            margin-bottom: 5px;
+        }
+
+        /* ---------- LOADING ---------- */
+
+        .loading {
+            text-align: center;
+            padding: 30px;
+            color: #6b7280;
+            grid-column: 1 / -1;
+        }
+
+        /* ---------- TOAST ---------- */
+
+        .toast {
+            position: fixed;
+            right: 25px;
+            bottom: 25px;
+            background: #111827;
+            color: white;
+            padding: 14px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            opacity: 0;
+            transform: translateY(20px);
+            pointer-events: none;
+            transition: 0.3s;
+            z-index: 9999;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .toast.success {
+            background: #16a34a;
+        }
+
+        .toast.error {
+            background: #dc2626;
+        }
+
+        /* ---------- RESPONSIVE ---------- */
+
+        @media (max-width: 900px) {
+            .task-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 700px) {
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full {
+                grid-column: auto;
+            }
+
+            .toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filters {
+                width: 100%;
+            }
+
+            .filters select {
+                width: 100%;
+            }
+
+            .task-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="header-content">
+        <div class="logo">
+            <h1>✓ Task Manager</h1>
+            <p>Organize your work and stay productive</p>
+        </div>
+
+        <div class="status">
+            <span class="status-dot"></span>
+            API Connected
+        </div>
+    </div>
+</header>
+
+<main>
+
+    <!-- STATISTICS -->
+
+    <section class="stats">
+
+        <div class="stat-card">
+            <span>Total Tasks</span>
+            <strong id="totalTasks">0</strong>
+        </div>
+
+        <div class="stat-card">
+            <span>Categories</span>
+            <strong id="totalCategories">0</strong>
+        </div>
+
+        <div class="stat-card">
+            <span>Showing</span>
+            <strong id="showingTasks">0</strong>
+        </div>
+
+    </section>
+
+
+    <!-- CREATE / EDIT FORM -->
+
+    <section class="panel">
+
+        <div class="panel-title">
+            <h2 id="formTitle">Create New Task</h2>
+        </div>
+
+        <form id="taskForm">
+
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label for="title">Task Title</label>
+                    <input
+                        type="text"
+                        id="title"
+                        placeholder="Enter task title"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="category">Category</label>
+                    <input
+                        type="text"
+                        id="category"
+                        placeholder="e.g. Work, Personal"
+                        required
+                    >
+                </div>
+
+                <div class="form-group full">
+                    <label for="description">Description</label>
+                    <textarea
+                        id="description"
+                        placeholder="Describe your task..."
+                    ></textarea>
+                </div>
+
+            </div>
+
+            <div class="form-actions">
+
+                <button
+                    type="submit"
+                    class="btn-primary"
+                    id="submitBtn"
+                >
+                    + Create Task
+                </button>
+
+                <button
+                    type="button"
+                    class="btn-secondary"
+                    id="cancelBtn"
+                    onclick="cancelEdit()"
+                    style="display:none;"
+                >
+                    Cancel
+                </button>
+
+            </div>
+
+        </form>
+
+    </section>
+
+
+    <!-- TASK LIST -->
+
+    <section>
+
+        <div class="toolbar">
+
+            <h2>My Tasks</h2>
+
+            <div class="filters">
+
+                <select id="categoryFilter">
+                    <option value="">All Categories</option>
+                </select>
+
+                <button
+                    class="btn-secondary"
+                    onclick="loadTasks()"
+                >
+                    ↻ Refresh
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div id="taskGrid" class="task-grid">
+
+            <div class="loading">
+                Loading tasks...
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<div id="toast" class="toast"></div>
+
+
+<script>
+
+    /*
+     * Spring Boot API
+     *
+     * Application running on:
+     * http://localhost:8081
+     */
+
+    const API_URL = "http://localhost:8081/api/tasks";
+
+    let tasks = [];
+    let editingId = null;
+
+
+    // -----------------------------------------
+    // LOAD ALL TASKS
+    // -----------------------------------------
+
+    async function loadTasks() {
+
+        const grid = document.getElementById("taskGrid");
+
+        grid.innerHTML = `
+            <div class="loading">
+                Loading tasks...
+            </div>
+        `;
+
+        try {
+
+            const response = await fetch(API_URL);
+
+            if (!response.ok) {
+                throw new Error("Failed to load tasks");
+            }
+
+            tasks = await response.json();
+
+            updateStatistics();
+            updateCategoryFilter();
+            renderTasks();
+
+        } catch (error) {
+
+            console.error(error);
+
+            grid.innerHTML = `
+                <div class="empty">
+                    <div class="empty-icon">⚠️</div>
+                    <h3>Unable to load tasks</h3>
+                    <p>Make sure your Spring Boot server is running on port 8081.</p>
+                </div>
+            `;
+
+            showToast("Could not connect to API", "error");
+        }
+    }
+
+
+    // -----------------------------------------
+    // RENDER TASKS
+    // -----------------------------------------
+
+    function renderTasks() {
+
+        const grid = document.getElementById("taskGrid");
+
+        const selectedCategory =
+            document.getElementById("categoryFilter").value;
+
+        let filteredTasks = tasks;
+
+        if (selectedCategory) {
+
+            filteredTasks = tasks.filter(task =>
+                task.category &&
+                task.category.toLowerCase() ===
+                selectedCategory.toLowerCase()
+            );
+
+        }
+
+        document.getElementById("showingTasks").textContent =
+            filteredTasks.length;
+
+
+        if (filteredTasks.length === 0) {
+
+            grid.innerHTML = `
+                <div class="empty">
+
+                    <div class="empty-icon">📋</div>
+
+                    <h3>No tasks found</h3>
+
+                    <p>
+                        Create a new task to get started.
+                    </p>
+
+                </div>
+            `;
+
+            return;
+        }
+
+
+        grid.innerHTML = filteredTasks.map(task => `
+
+            <div class="task-card">
+
+                <div class="task-top">
+
+                    <div class="task-title">
+                        ${escapeHtml(task.title || "Untitled")}
+                    </div>
+
+                    <span class="category">
+                        ${escapeHtml(task.category || "General")}
+                    </span>
+
+                </div>
+
+                <div class="task-description">
+
+                    ${escapeHtml(
+                        task.description ||
+                        "No description provided."
+                    )}
+
+                </div>
+
+                <div class="task-actions">
+
+                    <button
+                        class="btn-edit"
+                        onclick="editTask(${task.id})"
+                    >
+                        ✏ Edit
+                    </button>
+
+                    <button
+                        class="btn-danger"
+                        onclick="deleteTask(${task.id})"
+                    >
+                        🗑 Delete
+                    </button>
+
+                </div>
+
+            </div>
+
+        `).join("");
+    }
+
+
+    // -----------------------------------------
+    // CREATE / UPDATE TASK
+    // -----------------------------------------
+
+    document
+        .getElementById("taskForm")
+        .addEventListener("submit", async function(event) {
+
+            event.preventDefault();
+
+            const task = {
+
+                title: document
+                    .getElementById("title")
+                    .value
+                    .trim(),
+
+                description: document
+                    .getElementById("description")
+                    .value
+                    .trim(),
+
+                category: document
+                    .getElementById("category")
+                    .value
+                    .trim()
+
+            };
+
+
+            if (!task.title || !task.category) {
+
+                showToast(
+                    "Title and category are required",
+                    "error"
+                );
+
+                return;
+            }
+
+
+            try {
+
+                let response;
+
+                if (editingId !== null) {
+
+                    response = await fetch(
+                        `${API_URL}/${editingId}`,
+                        {
+                            method: "PUT",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify(task)
+                        }
+                    );
+
+                } else {
+
+                    response = await fetch(
+                        API_URL,
+                        {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify(task)
+                        }
+                    );
+
+                }
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "Unable to save task"
+                    );
+
+                }
+
+
+                if (editingId !== null) {
+
+                    showToast(
+                        "Task updated successfully",
+                        "success"
+                    );
+
+                } else {
+
+                    showToast(
+                        "Task created successfully",
+                        "success"
+                    );
+
+                }
+
+
+                resetForm();
+
+                await loadTasks();
+
+            } catch (error) {
+
+                console.error(error);
+
+                showToast(
+                    "Failed to save task",
+                    "error"
+                );
+
+            }
+
+        });
+
+
+    // -----------------------------------------
+    // EDIT TASK
+    // -----------------------------------------
+
+    function editTask(id) {
+
+        const task = tasks.find(
+            task => task.id === id
+        );
+
+        if (!task) return;
+
+
+        editingId = id;
+
+
+        document.getElementById("title").value =
+            task.title || "";
+
+        document.getElementById("description").value =
+            task.description || "";
+
+        document.getElementById("category").value =
+            task.category || "";
+
+
+        document.getElementById("formTitle").textContent =
+            "Edit Task";
+
+        document.getElementById("submitBtn").textContent =
+            "✓ Update Task";
+
+        document.getElementById("cancelBtn").style.display =
+            "inline-block";
+
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+
+    }
+
+
+    // -----------------------------------------
+    // DELETE TASK
+    // -----------------------------------------
+
+    async function deleteTask(id) {
+
+        const task = tasks.find(
+            task => task.id === id
+        );
+
+        const title = task
+            ? task.title
+            : "this task";
+
+
+        if (!confirm(
+            `Are you sure you want to delete "${title}"?`
+        )) {
+
+            return;
+
+        }
+
+
+        try {
+
+            const response = await fetch(
+                `${API_URL}/${id}`,
+                {
+                    method: "DELETE"
+                }
+            );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Delete failed"
+                );
+
+            }
+
+
+            showToast(
+                "Task deleted successfully",
+                "success"
+            );
+
+
+            await loadTasks();
+
+
+        } catch (error) {
+
+            console.error(error);
+
+            showToast(
+                "Failed to delete task",
+                "error"
+            );
+
+        }
+
+    }
+
+
+    // -----------------------------------------
+    // CATEGORY FILTER
+    // -----------------------------------------
+
+    function updateCategoryFilter() {
+
+        const filter =
+            document.getElementById("categoryFilter");
+
+        const currentValue = filter.value;
+
+
+        const categories = [
+            ...new Set(
+                tasks
+                    .map(task => task.category)
+                    .filter(category => category)
+            )
+        ];
+
+
+        categories.sort();
+
+
+        filter.innerHTML = `
+            <option value="">
+                All Categories
+            </option>
+        `;
+
+
+        categories.forEach(category => {
+
+            const option =
+                document.createElement("option");
+
+            option.value = category;
+            option.textContent = category;
+
+            filter.appendChild(option);
+
+        });
+
+
+        if (categories.includes(currentValue)) {
+
+            filter.value = currentValue;
+
+        }
+
+    }
+
+
+    document
+        .getElementById("categoryFilter")
+        .addEventListener(
+            "change",
+            renderTasks
+        );
+
+
+    // -----------------------------------------
+    // STATISTICS
+    // -----------------------------------------
+
+    function updateStatistics() {
+
+        document.getElementById("totalTasks")
+            .textContent = tasks.length;
+
+
+        const categories = new Set(
+            tasks
+                .map(task => task.category)
+                .filter(category => category)
+        );
+
+
+        document.getElementById("totalCategories")
+            .textContent = categories.size;
+
+    }
+
+
+    // -----------------------------------------
+    // RESET FORM
+    // -----------------------------------------
+
+    function resetForm() {
+
+        editingId = null;
+
+        document.getElementById("taskForm").reset();
+
+        document.getElementById("formTitle")
+            .textContent = "Create New Task";
+
+        document.getElementById("submitBtn")
+            .textContent = "+ Create Task";
+
+        document.getElementById("cancelBtn")
+            .style.display = "none";
+
+    }
+
+
+    function cancelEdit() {
+
+        resetForm();
+
+    }
+
+
+    // -----------------------------------------
+    // TOAST MESSAGE
+    // -----------------------------------------
+
+    function showToast(message, type = "") {
+
+        const toast =
+            document.getElementById("toast");
+
+        toast.textContent = message;
+
+        toast.className =
+            `toast show ${type}`;
+
+
+        setTimeout(() => {
+
+            toast.className = "toast";
+
+        }, 3000);
+
+    }
+
+
+    // -----------------------------------------
+    // HTML SECURITY
+    // -----------------------------------------
+
+    function escapeHtml(value) {
+
+        return String(value)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+
+    }
+
+
+    // -----------------------------------------
+    // INITIAL LOAD
+    // -----------------------------------------
+
+    loadTasks();
+
+</script>
+
+</body>
+</html>

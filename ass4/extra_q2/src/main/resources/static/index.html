@@ -1,0 +1,1691 @@
+    <!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Inventory Management</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f7fb;
+            color: #1f2937;
+            min-height: 100vh;
+        }
+
+        /* ================= HEADER ================= */
+
+        header {
+            background:
+                linear-gradient(
+                    135deg,
+                    #7c3aed,
+                    #4f46e5
+                );
+
+            color: white;
+            padding: 27px 25px;
+
+            box-shadow:
+                0 4px 18px
+                rgba(0,0,0,0.12);
+        }
+
+        .header-inner {
+            max-width: 1200px;
+            margin: auto;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .brand h1 {
+            font-size: 28px;
+            margin-bottom: 6px;
+        }
+
+        .brand p {
+            font-size: 13px;
+            opacity: .85;
+        }
+
+        .status {
+            background: rgba(255,255,255,.15);
+            padding: 9px 15px;
+            border-radius: 30px;
+            font-size: 13px;
+        }
+
+        /* ================= MAIN ================= */
+
+        main {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        /* ================= STATS ================= */
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 22px;
+
+            box-shadow:
+                0 3px 15px
+                rgba(0,0,0,.06);
+        }
+
+        .stat-label {
+            color: #6b7280;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            color: #4f46e5;
+            font-size: 29px;
+            font-weight: bold;
+        }
+
+        /* ================= TOOLBAR ================= */
+
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .toolbar h2 {
+            font-size: 21px;
+        }
+
+        .toolbar-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* ================= PANELS ================= */
+
+        .panel {
+            background: white;
+            border-radius: 17px;
+            padding: 25px;
+            margin-bottom: 25px;
+
+            box-shadow:
+                0 3px 18px
+                rgba(0,0,0,.06);
+        }
+
+        .panel-title {
+            margin-bottom: 20px;
+        }
+
+        .panel-title h2 {
+            font-size: 20px;
+        }
+
+        .panel-title p {
+            color: #6b7280;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        /* ================= FORM ================= */
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 14px;
+
+            border: 1px solid #dbe1ea;
+            border-radius: 9px;
+
+            outline: none;
+            font-size: 14px;
+        }
+
+        input:focus {
+            border-color: #4f46e5;
+
+            box-shadow:
+                0 0 0 3px
+                rgba(79,70,229,.10);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        /* ================= BUTTONS ================= */
+
+        button {
+            border: none;
+            cursor: pointer;
+
+            padding: 11px 17px;
+            border-radius: 9px;
+
+            font-size: 13px;
+            font-weight: 600;
+
+            transition: .2s;
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #4338ca;
+        }
+
+        .btn-secondary {
+            background: #eef2ff;
+            color: #4f46e5;
+        }
+
+        .btn-danger {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .btn-warning {
+            background: #fef3c7;
+            color: #b45309;
+        }
+
+        /* ================= TABLE ================= */
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #f8fafc;
+            color: #6b7280;
+
+            text-align: left;
+
+            padding: 13px;
+
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 14px 13px;
+
+            border-top:
+                1px solid #eef0f4;
+
+            font-size: 14px;
+        }
+
+        tr:hover {
+            background: #fafaff;
+        }
+
+        /* ================= BADGES ================= */
+
+        .badge {
+            display: inline-block;
+
+            padding: 5px 10px;
+
+            border-radius: 20px;
+
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .badge-good {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .badge-low {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        /* ================= STOCK ================= */
+
+        .stock-good {
+            color: #16a34a;
+            font-weight: bold;
+        }
+
+        .stock-low {
+            color: #dc2626;
+            font-weight: bold;
+        }
+
+        /* ================= EMPTY ================= */
+
+        .empty {
+            text-align: center;
+            padding: 50px 20px;
+            color: #6b7280;
+        }
+
+        .empty-icon {
+            font-size: 45px;
+            margin-bottom: 10px;
+        }
+
+        /* ================= LOW STOCK ================= */
+
+        .low-stock-panel {
+            border-left: 5px solid #dc2626;
+        }
+
+        /* ================= TOAST ================= */
+
+        .toast {
+            position: fixed;
+
+            right: 25px;
+            bottom: 25px;
+
+            background: #111827;
+            color: white;
+
+            padding: 14px 20px;
+
+            border-radius: 10px;
+
+            opacity: 0;
+
+            transform:
+                translateY(20px);
+
+            pointer-events: none;
+
+            transition: .3s;
+
+            z-index: 9999;
+
+            max-width: 350px;
+        }
+
+        .toast.show {
+            opacity: 1;
+
+            transform:
+                translateY(0);
+        }
+
+        .toast.success {
+            background: #16a34a;
+        }
+
+        .toast.error {
+            background: #dc2626;
+        }
+
+        /* ================= RESPONSIVE ================= */
+
+        @media (max-width: 850px) {
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .toolbar-actions {
+                width: 100%;
+            }
+
+            .toolbar-actions button {
+                flex: 1;
+            }
+
+        }
+
+        @media (max-width: 600px) {
+
+            .header-inner {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            main {
+                padding: 0 12px;
+            }
+
+            .panel {
+                padding: 18px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- ================= HEADER ================= -->
+
+<header>
+
+    <div class="header-inner">
+
+        <div class="brand">
+
+            <h1>
+                📦 Inventory Management
+            </h1>
+
+            <p>
+                Stock & Inventory Control System
+            </p>
+
+        </div>
+
+
+        <div class="status">
+
+            🟢 API :8084
+
+        </div>
+
+    </div>
+
+</header>
+
+
+<main>
+
+
+    <!-- ================= STATISTICS ================= -->
+
+    <section class="stats">
+
+        <div class="stat-card">
+
+            <div class="stat-label">
+                Total Items
+            </div>
+
+            <div
+                class="stat-value"
+                id="totalItems"
+            >
+                0
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-label">
+                Total Stock
+            </div>
+
+            <div
+                class="stat-value"
+                id="totalStock"
+            >
+                0
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-label">
+                Low Stock Items
+            </div>
+
+            <div
+                class="stat-value"
+                id="lowStockCount"
+            >
+                0
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= ADD ITEM ================= -->
+
+    <section class="panel">
+
+        <div class="panel-title">
+
+            <h2>
+                Add Inventory Item
+            </h2>
+
+            <p>
+                Add a new item to your inventory.
+            </p>
+
+        </div>
+
+
+        <form id="itemForm">
+
+            <div class="form-grid">
+
+
+                <div class="form-group">
+
+                    <label for="itemId">
+                        Item ID
+                    </label>
+
+                    <input
+                        type="number"
+                        id="itemId"
+                        placeholder="Example: 101"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="itemName">
+                        Item Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="itemName"
+                        placeholder="Example: Laptop"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="itemQuantity">
+                        Quantity
+                    </label>
+
+                    <input
+                        type="number"
+                        id="itemQuantity"
+                        placeholder="Example: 50"
+                        min="0"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="itemPrice">
+                        Price
+                    </label>
+
+                    <input
+                        type="number"
+                        id="itemPrice"
+                        placeholder="Example: 25000"
+                        min="0"
+                        step="0.01"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="form-actions">
+
+                <button
+                    type="submit"
+                    class="btn-primary"
+                >
+                    + Add Item
+                </button>
+
+
+                <button
+                    type="button"
+                    class="btn-secondary"
+                    onclick="resetForm()"
+                >
+                    Clear
+                </button>
+
+            </div>
+
+        </form>
+
+    </section>
+
+
+    <!-- ================= UPDATE STOCK ================= -->
+
+    <section class="panel">
+
+        <div class="panel-title">
+
+            <h2>
+                Update Stock
+            </h2>
+
+            <p>
+                Set the current stock quantity for an item.
+            </p>
+
+        </div>
+
+
+        <form id="stockForm">
+
+            <div class="form-grid">
+
+
+                <div class="form-group">
+
+                    <label for="stockItemId">
+                        Item ID
+                    </label>
+
+                    <input
+                        type="number"
+                        id="stockItemId"
+                        placeholder="Example: 101"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="newQuantity">
+                        New Quantity
+                    </label>
+
+                    <input
+                        type="number"
+                        id="newQuantity"
+                        placeholder="Example: 100"
+                        min="0"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="form-actions">
+
+                <button
+                    type="submit"
+                    class="btn-warning"
+                >
+                    Update Stock
+                </button>
+
+            </div>
+
+        </form>
+
+    </section>
+
+
+    <!-- ================= INVENTORY ================= -->
+
+    <section class="panel">
+
+        <div class="toolbar">
+
+            <div>
+
+                <h2>
+                    Inventory Items
+                </h2>
+
+            </div>
+
+
+            <div class="toolbar-actions">
+
+                <button
+                    class="btn-secondary"
+                    onclick="loadItems()"
+                >
+                    ↻ Refresh
+                </button>
+
+
+                <button
+                    class="btn-danger"
+                    onclick="loadLowStock()"
+                >
+                    ⚠ Low Stock
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            ID
+                        </th>
+
+                        <th>
+                            Item Name
+                        </th>
+
+                        <th>
+                            Quantity
+                        </th>
+
+                        <th>
+                            Price
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                        <th>
+                            Action
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="inventoryTable">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= LOW STOCK ================= -->
+
+    <section
+        class="panel low-stock-panel"
+    >
+
+        <div class="toolbar">
+
+            <div>
+
+                <h2>
+                    ⚠ Low Stock Items
+                </h2>
+
+                <p class="panel-title">
+                    Items at or below the selected threshold.
+                </p>
+
+            </div>
+
+
+            <div class="toolbar-actions">
+
+                <input
+                    type="number"
+                    id="threshold"
+                    value="5"
+                    min="0"
+                    style="
+                        width:100px;
+                        padding:10px;
+                        border:1px solid #ddd;
+                        border-radius:8px;
+                    "
+                >
+
+
+                <button
+                    class="btn-danger"
+                    onclick="loadLowStock()"
+                >
+                    Check
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            ID
+                        </th>
+
+                        <th>
+                            Item
+                        </th>
+
+                        <th>
+                            Quantity
+                        </th>
+
+                        <th>
+                            Price
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="lowStockTable">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+</main>
+
+
+<div
+    id="toast"
+    class="toast"
+></div>
+
+
+<script>
+
+    // ==========================================
+    // API
+    // ==========================================
+
+    const API =
+        "http://localhost:8084/api/inventory";
+
+
+    let items = [];
+
+
+    // ==========================================
+    // LOAD ALL ITEMS
+    // ==========================================
+
+    async function loadItems() {
+
+        const table =
+            document.getElementById(
+                "inventoryTable"
+            );
+
+
+        table.innerHTML = `
+            <tr>
+                <td
+                    colspan="6"
+                    class="empty"
+                >
+                    Loading inventory...
+                </td>
+            </tr>
+        `;
+
+
+        try {
+
+            const response =
+                await fetch(API);
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Failed to load inventory"
+                );
+
+            }
+
+
+            items =
+                await response.json();
+
+
+            renderItems();
+
+            updateStatistics();
+
+            loadLowStock();
+
+
+        } catch (error) {
+
+            console.error(error);
+
+
+            table.innerHTML = `
+                <tr>
+                    <td
+                        colspan="6"
+                        class="empty"
+                    >
+
+                        <div class="empty-icon">
+                            ⚠️
+                        </div>
+
+                        Unable to connect to
+                        Inventory API.
+
+                    </td>
+                </tr>
+            `;
+
+
+            showToast(
+                "Could not connect to port 8084",
+                "error"
+            );
+
+        }
+
+    }
+
+
+    // ==========================================
+    // RENDER ITEMS
+    // ==========================================
+
+    function renderItems() {
+
+        const table =
+            document.getElementById(
+                "inventoryTable"
+            );
+
+
+        if (items.length === 0) {
+
+            table.innerHTML = `
+                <tr>
+
+                    <td
+                        colspan="6"
+                        class="empty"
+                    >
+
+                        <div class="empty-icon">
+                            📦
+                        </div>
+
+                        No inventory items found.
+
+                    </td>
+
+                </tr>
+            `;
+
+            return;
+
+        }
+
+
+        table.innerHTML =
+            items.map(
+                item => {
+
+                    const quantity =
+                        Number(
+                            item.quantity || 0
+                        );
+
+
+                    const low =
+                        quantity <= 5;
+
+
+                    return `
+
+                        <tr>
+
+                            <td>
+                                <strong>
+                                    ${item.id}
+                                </strong>
+                            </td>
+
+
+                            <td>
+                                ${escapeHtml(
+                                    item.name ||
+                                    "Unnamed"
+                                )}
+                            </td>
+
+
+                            <td
+                                class="${
+                                    low
+                                        ? "stock-low"
+                                        : "stock-good"
+                                }"
+                            >
+                                ${quantity}
+                            </td>
+
+
+                            <td>
+                                ₹${formatMoney(
+                                    item.price
+                                )}
+                            </td>
+
+
+                            <td>
+
+                                <span
+                                    class="badge ${
+                                        low
+                                            ? "badge-low"
+                                            : "badge-good"
+                                    }"
+                                >
+
+                                    ${
+                                        low
+                                            ? "Low Stock"
+                                            : "In Stock"
+                                    }
+
+                                </span>
+
+                            </td>
+
+
+                            <td>
+
+                                <button
+                                    class="btn-danger"
+                                    onclick="deleteItem(
+                                        ${item.id}
+                                    )"
+                                >
+                                    Delete
+                                </button>
+
+                            </td>
+
+                        </tr>
+
+                    `;
+
+                }
+            ).join("");
+
+    }
+
+
+    // ==========================================
+    // ADD ITEM
+    // ==========================================
+
+    document
+        .getElementById("itemForm")
+        .addEventListener(
+            "submit",
+            async function(event) {
+
+                event.preventDefault();
+
+
+                const item = {
+
+                    id:
+                        Number(
+                            document
+                                .getElementById(
+                                    "itemId"
+                                )
+                                .value
+                        ),
+
+                    name:
+                        document
+                            .getElementById(
+                                "itemName"
+                            )
+                            .value
+                            .trim(),
+
+                    quantity:
+                        Number(
+                            document
+                                .getElementById(
+                                    "itemQuantity"
+                                )
+                                .value
+                        ),
+
+                    price:
+                        Number(
+                            document
+                                .getElementById(
+                                    "itemPrice"
+                                )
+                                .value
+                        )
+
+                };
+
+
+                try {
+
+                    const response =
+                        await fetch(
+                            API,
+                            {
+                                method: "POST",
+
+                                headers: {
+                                    "Content-Type":
+                                        "application/json"
+                                },
+
+                                body:
+                                    JSON.stringify(
+                                        item
+                                    )
+                            }
+                        );
+
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            await response.text()
+                        );
+
+                    }
+
+
+                    showToast(
+                        "Item added successfully",
+                        "success"
+                    );
+
+
+                    resetForm();
+
+
+                    await loadItems();
+
+
+                } catch (error) {
+
+                    console.error(error);
+
+
+                    showToast(
+                        error.message ||
+                        "Failed to add item",
+                        "error"
+                    );
+
+                }
+
+            }
+        );
+
+
+    // ==========================================
+    // UPDATE STOCK
+    // ==========================================
+
+    document
+        .getElementById("stockForm")
+        .addEventListener(
+            "submit",
+            async function(event) {
+
+                event.preventDefault();
+
+
+                const id =
+                    Number(
+                        document
+                            .getElementById(
+                                "stockItemId"
+                            )
+                            .value
+                    );
+
+
+                const quantity =
+                    Number(
+                        document
+                            .getElementById(
+                                "newQuantity"
+                            )
+                            .value
+                    );
+
+
+                try {
+
+                    const response =
+                        await fetch(
+                            API +
+                            "/" +
+                            id +
+                            "/stock?quantity=" +
+                            quantity,
+                            {
+                                method: "PUT"
+                            }
+                        );
+
+
+                    const result =
+                        await response.text();
+
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            result
+                        );
+
+                    }
+
+
+                    showToast(
+                        "Stock updated successfully",
+                        "success"
+                    );
+
+
+                    document
+                        .getElementById(
+                            "stockForm"
+                        )
+                        .reset();
+
+
+                    await loadItems();
+
+
+                } catch (error) {
+
+                    showToast(
+                        error.message ||
+                        "Failed to update stock",
+                        "error"
+                    );
+
+                }
+
+            }
+        );
+
+
+    // ==========================================
+    // DELETE ITEM
+    // ==========================================
+
+    async function deleteItem(id) {
+
+        if (
+            !confirm(
+                "Are you sure you want to delete this item?"
+            )
+        ) {
+
+            return;
+
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    API +
+                    "/" +
+                    id,
+                    {
+                        method: "DELETE"
+                    }
+                );
+
+
+            const result =
+                await response.text();
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    result
+                );
+
+            }
+
+
+            showToast(
+                result ||
+                "Item deleted",
+                "success"
+            );
+
+
+            await loadItems();
+
+
+        } catch (error) {
+
+            showToast(
+                error.message ||
+                "Failed to delete item",
+                "error"
+            );
+
+        }
+
+    }
+
+
+    // ==========================================
+    // LOW STOCK
+    // ==========================================
+
+    async function loadLowStock() {
+
+        const threshold =
+            Number(
+                document
+                    .getElementById(
+                        "threshold"
+                    )
+                    .value
+            );
+
+
+        const table =
+            document.getElementById(
+                "lowStockTable"
+            );
+
+
+        try {
+
+            const response =
+                await fetch(
+                    API +
+                    "/low-stock?threshold=" +
+                    threshold
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Failed to load low stock"
+                );
+
+            }
+
+
+            const lowStock =
+                await response.json();
+
+
+            document.getElementById(
+                "lowStockCount"
+            ).textContent =
+                lowStock.length;
+
+
+            if (
+                lowStock.length === 0
+            ) {
+
+                table.innerHTML = `
+                    <tr>
+
+                        <td
+                            colspan="5"
+                            class="empty"
+                        >
+
+                            <div class="empty-icon">
+                                ✅
+                            </div>
+
+                            No low-stock items.
+
+                        </td>
+
+                    </tr>
+                `;
+
+                return;
+
+            }
+
+
+            table.innerHTML =
+                lowStock.map(
+                    item => `
+
+                        <tr>
+
+                            <td>
+                                ${item.id}
+                            </td>
+
+                            <td>
+                                <strong>
+                                    ${escapeHtml(
+                                        item.name ||
+                                        "Unnamed"
+                                    )}
+                                </strong>
+                            </td>
+
+                            <td
+                                class="stock-low"
+                            >
+                                ${item.quantity}
+                            </td>
+
+                            <td>
+                                ₹${formatMoney(
+                                    item.price
+                                )}
+                            </td>
+
+                            <td>
+
+                                <span
+                                    class="badge badge-low"
+                                >
+                                    Low Stock
+                                </span>
+
+                            </td>
+
+                        </tr>
+
+                    `
+                ).join("");
+
+
+        } catch (error) {
+
+            console.error(error);
+
+            table.innerHTML = `
+                <tr>
+
+                    <td
+                        colspan="5"
+                        class="empty"
+                    >
+                        Unable to load low-stock items.
+                    </td>
+
+                </tr>
+            `;
+
+        }
+
+    }
+
+
+    // ==========================================
+    // STATISTICS
+    // ==========================================
+
+    function updateStatistics() {
+
+        document.getElementById(
+            "totalItems"
+        ).textContent =
+            items.length;
+
+
+        const totalStock =
+            items.reduce(
+                (
+                    total,
+                    item
+                ) =>
+                    total +
+                    Number(
+                        item.quantity || 0
+                    ),
+                0
+            );
+
+
+        document.getElementById(
+            "totalStock"
+        ).textContent =
+            totalStock;
+
+    }
+
+
+    // ==========================================
+    // RESET FORM
+    // ==========================================
+
+    function resetForm() {
+
+        document
+            .getElementById(
+                "itemForm"
+            )
+            .reset();
+
+    }
+
+
+    // ==========================================
+    // MONEY FORMAT
+    // ==========================================
+
+    function formatMoney(value) {
+
+        const number =
+            Number(value || 0);
+
+
+        return number.toLocaleString(
+            "en-IN",
+            {
+                maximumFractionDigits: 2
+            }
+        );
+
+    }
+
+
+    // ==========================================
+    // ESCAPE HTML
+    // ==========================================
+
+    function escapeHtml(value) {
+
+        return String(value)
+            .replace(
+                /&/g,
+                "&amp;"
+            )
+            .replace(
+                /</g,
+                "&lt;"
+            )
+            .replace(
+                />/g,
+                "&gt;"
+            )
+            .replace(
+                /"/g,
+                "&quot;"
+            )
+            .replace(
+                /'/g,
+                "&#039;"
+            );
+
+    }
+
+
+    // ==========================================
+    // TOAST
+    // ==========================================
+
+    function showToast(
+        message,
+        type = ""
+    ) {
+
+        const toast =
+            document.getElementById(
+                "toast"
+            );
+
+
+        toast.textContent =
+            message;
+
+
+        toast.className =
+            "toast show " +
+            type;
+
+
+        setTimeout(
+            () => {
+
+                toast.className =
+                    "toast";
+
+            },
+            3500
+        );
+
+    }
+
+
+    // ==========================================
+    // INITIAL LOAD
+    // ==========================================
+
+    loadItems();
+
+</script>
+
+
+</body>
+
+</html>
