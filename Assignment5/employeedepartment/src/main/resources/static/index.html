@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Employee Department Search</title>
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #eef1f4;
+            margin: 0;
+            padding: 50px;
+        }
+
+        .container {
+            width: 650px;
+            margin: auto;
+            background: white;
+            padding: 35px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 7px;
+            font-size: 15px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 18px;
+            border: none;
+            border-radius: 7px;
+            background: #333;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #555;
+        }
+
+        #result {
+            margin-top: 25px;
+        }
+
+        .employee {
+            background: #f5f5f5;
+            padding: 15px;
+            margin-top: 10px;
+            border-radius: 8px;
+            line-height: 1.7;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="container">
+
+    <h1>Employee Department Search</h1>
+
+    <div class="subtitle">
+        View employees belonging to a specific department
+    </div>
+
+
+    <label>Enter Department Name</label>
+
+    <input
+        type="text"
+        id="department"
+        placeholder="Example: Computer Science"
+    >
+
+
+    <button onclick="searchEmployees()">
+        Search Employees
+    </button>
+
+
+    <div id="result"></div>
+
+</div>
+
+
+<script>
+
+async function searchEmployees() {
+
+    const department =
+        document.getElementById("department").value.trim();
+
+    if (department === "") {
+
+        document.getElementById("result").innerHTML =
+            "<p>Please enter a department name.</p>";
+
+        return;
+    }
+
+
+    const response = await fetch(
+        "/employees/department/" +
+        encodeURIComponent(department)
+    );
+
+
+    const employees = await response.json();
+
+
+    const result =
+        document.getElementById("result");
+
+    result.innerHTML = "";
+
+
+    employees.forEach(employee => {
+
+        const div =
+            document.createElement("div");
+
+        div.className = "employee";
+
+        div.innerText = employee;
+
+        result.appendChild(div);
+    });
+}
+
+</script>
+
+</body>
+
+</html>

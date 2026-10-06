@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Student Gateway</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <aside class="sidebar">
+
+        <div class="brand">
+            <div class="brand-icon">S</div>
+
+            <div>
+                <h2>StudentHub</h2>
+                <span>API Gateway</span>
+            </div>
+        </div>
+
+        <nav>
+            <a class="active">
+                <span>▣</span>
+                Dashboard
+            </a>
+
+            <a onclick="showStudents()">
+                <span>♙</span>
+                Students
+            </a>
+        </nav>
+
+        <div class="gateway-status">
+            <div class="status-dot"></div>
+
+            <div>
+                <strong>Gateway Online</strong>
+                <small>Port 8087</small>
+            </div>
+        </div>
+
+    </aside>
+
+
+    <main class="main">
+
+        <header class="topbar">
+
+            <div>
+                <p class="small-title">MICROSERVICE PLATFORM</p>
+                <h1>Student Management</h1>
+            </div>
+
+            <button class="refresh-btn" onclick="loadStudents()">
+                ↻ Refresh
+            </button>
+
+        </header>
+
+
+        <section class="hero">
+
+            <div>
+                <span class="badge">SPRING CLOUD GATEWAY</span>
+
+                <h2>Student Management Gateway</h2>
+
+                <p>
+                    Access student services through a centralized
+                    API Gateway.
+                </p>
+            </div>
+
+            <div class="route-box">
+
+                <div class="route">
+                    <span>CLIENT</span>
+                    <b>8087</b>
+                </div>
+
+                <div class="arrow">→</div>
+
+                <div class="route">
+                    <span>STUDENT SERVICE</span>
+                    <b>8084</b>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <section class="stats">
+
+            <div class="stat-card">
+                <div class="stat-icon">♙</div>
+
+                <div>
+                    <span>Total Students</span>
+                    <strong id="studentCount">0</strong>
+                </div>
+            </div>
+
+
+            <div class="stat-card">
+                <div class="stat-icon">◉</div>
+
+                <div>
+                    <span>Gateway Port</span>
+                    <strong>8087</strong>
+                </div>
+            </div>
+
+
+            <div class="stat-card">
+                <div class="stat-icon">◆</div>
+
+                <div>
+                    <span>Service Port</span>
+                    <strong>8084</strong>
+                </div>
+            </div>
+
+
+            <div class="stat-card">
+                <div class="stat-icon">✓</div>
+
+                <div>
+                    <span>Gateway Status</span>
+                    <strong id="status">Checking...</strong>
+                </div>
+            </div>
+
+        </section>
+
+
+        <section class="content-card">
+
+            <div class="card-header">
+
+                <div>
+                    <p class="small-title">STUDENT SERVICE</p>
+                    <h2>Student Records</h2>
+                </div>
+
+                <button class="outline-btn" onclick="loadStudents()">
+                    Load Students
+                </button>
+
+            </div>
+
+
+            <div id="message" class="message">
+                Loading student data...
+            </div>
+
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Student Name</th>
+                            <th>Course</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="studentTable">
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <section class="architecture">
+
+            <div class="architecture-header">
+                <p class="small-title">REQUEST FLOW</p>
+                <h2>Gateway Architecture</h2>
+            </div>
+
+            <div class="flow">
+
+                <div class="flow-card">
+                    <div class="flow-number">01</div>
+                    <h3>Browser</h3>
+                    <p>Client sends request</p>
+                    <strong>:8087</strong>
+                </div>
+
+                <div class="flow-arrow">→</div>
+
+                <div class="flow-card highlight">
+                    <div class="flow-number">02</div>
+                    <h3>API Gateway</h3>
+                    <p>Routes the request</p>
+                    <strong>/students/**</strong>
+                </div>
+
+                <div class="flow-arrow">→</div>
+
+                <div class="flow-card">
+                    <div class="flow-number">03</div>
+                    <h3>Student Service</h3>
+                    <p>Returns student data</p>
+                    <strong>:8084</strong>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
