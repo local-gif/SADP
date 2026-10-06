@@ -1,0 +1,905 @@
+ASSIGNMENT 5 — COMPLETE RUN + THUNDER CLIENT GUIDE
+=====================================================
+
+IMPORTANT
+---------
+This guide is extracted from the actual source code inside Assignment5.zip.
+There are 5 projects:
+
+1. studentmanagement     -> Student REST API       -> port 8084
+2. api-gateway            -> Spring Cloud Gateway   -> port 8087
+3. employeedepartment     -> Employee Department    -> port 8085
+4. hrmicroservice         -> HR Candidate API       -> port 8086
+5. extra2                 -> Inventory REST API     -> port 8089
+
+Java version in the projects: Java 17
+Maven wrapper is included in every project.
+
+=====================================================
+0. EXTRACT ZIP ON LINUX
+=====================================================
+
+unzip Assignment5.zip
+cd Assignment5
+
+Check projects:
+
+ls
+
+Expected:
+api-gateway
+employeedepartment
+extra2
+hrmicroservice
+studentmanagement
+
+Make Maven wrappers executable:
+
+chmod +x */mvnw
+
+Check Java:
+
+java -version
+
+Recommended:
+Java 17 or compatible newer Java.
+
+=====================================================
+1. STUDENT MANAGEMENT
+=====================================================
+
+PROJECT:
+studentmanagement
+
+PORT:
+8084
+
+MAIN CLASS:
+com.example.studentmanagement.StudentmanagementApplication
+
+PURPOSE / QUESTION:
+Create a Student Management REST service that:
+- adds a student
+- validates student data
+- displays all students
+- searches a student by roll number
+- deletes a student
+
+IMPORTANT:
+Student data is stored in memory.
+Restarting the application clears the students.
+
+-----------------------------------------------------
+RUN
+-----------------------------------------------------
+
+cd studentmanagement
+
+./mvnw clean package
+
+./mvnw spring-boot:run
+
+If successful, service runs at:
+
+http://localhost:8084
+
+-----------------------------------------------------
+THUNDER CLIENT — ADD STUDENT
+-----------------------------------------------------
+
+POST
+http://localhost:8084/students
+
+Header:
+Content-Type: application/json
+
+Body -> JSON:
+
+{
+  "rollNo": 101,
+  "name": "Vivek Singh",
+  "email": "vivek@example.com",
+  "course": "MSc Computer Science",
+  "semester": 3
+}
+
+Expected:
+Student added successfully.
+
+-----------------------------------------------------
+GET ALL STUDENTS
+-----------------------------------------------------
+
+GET
+http://localhost:8084/students
+
+-----------------------------------------------------
+GET STUDENT BY ROLL NUMBER
+-----------------------------------------------------
+
+GET
+http://localhost:8084/students/101
+
+-----------------------------------------------------
+DELETE STUDENT
+-----------------------------------------------------
+
+DELETE
+http://localhost:8084/students/101
+
+Expected:
+Student deleted successfully.
+
+-----------------------------------------------------
+VALIDATION TESTS
+-----------------------------------------------------
+
+Invalid roll number:
+
+POST http://localhost:8084/students
+
+{
+  "rollNo": 0,
+  "name": "Vivek Singh",
+  "email": "vivek@example.com",
+  "course": "MSc CS",
+  "semester": 3
+}
+
+Expected:
+Roll number must be greater than 0.
+
+Invalid email:
+
+{
+  "rollNo": 102,
+  "name": "Vivek Singh",
+  "email": "wrong-email",
+  "course": "MSc CS",
+  "semester": 3
+}
+
+Expected:
+Please enter a valid email address.
+
+Invalid semester:
+
+{
+  "rollNo": 103,
+  "name": "Vivek Singh",
+  "email": "vivek@example.com",
+  "course": "MSc CS",
+  "semester": 7
+}
+
+Expected:
+Semester must be between 1 and 6.
+
+Duplicate roll number:
+First add rollNo 101, then POST the same rollNo again.
+
+Expected:
+Student with this roll number already exists.
+
+=====================================================
+2. API GATEWAY
+=====================================================
+
+PROJECT:
+api-gateway
+
+PORT:
+8087
+
+MAIN CLASS:
+com.example.api_gateway.ApiGatewayApplication
+
+PURPOSE / QUESTION:
+Create a Spring Cloud API Gateway that forwards:
+
+Client:
+8087
+
+to:
+
+Student Management Service:
+8084
+
+Gateway route:
+
+/students/**
+
+Target:
+
+http://localhost:8084
+
+IMPORTANT:
+The Student Management service MUST be running before testing
+the gateway.
+
+-----------------------------------------------------
+RUN STUDENT SERVICE FIRST
+-----------------------------------------------------
+
+Terminal 1:
+
+cd studentmanagement
+./mvnw spring-boot:run
+
+-----------------------------------------------------
+RUN GATEWAY
+-----------------------------------------------------
+
+Terminal 2:
+
+cd api-gateway
+
+./mvnw clean package
+
+./mvnw spring-boot:run
+
+Gateway:
+
+http://localhost:8087
+
+-----------------------------------------------------
+THUNDER CLIENT — GATEWAY GET
+-----------------------------------------------------
+
+GET
+http://localhost:8087/students
+
+This request is handled by the gateway and forwarded to:
+
+http://localhost:8084/students
+
+-----------------------------------------------------
+THUNDER CLIENT — GATEWAY POST
+-----------------------------------------------------
+
+POST
+http://localhost:8087/students
+
+Header:
+Content-Type: application/json
+
+Body:
+
+{
+  "rollNo": 201,
+  "name": "Rahul Sharma",
+  "email": "rahul@example.com",
+  "course": "MCA",
+  "semester": 2
+}
+
+The request goes:
+
+Thunder Client
+     |
+     v
+localhost:8087
+     |
+     v
+API Gateway
+     |
+     v
+localhost:8084/students
+     |
+     v
+Student Management
+
+-----------------------------------------------------
+GATEWAY GET BY ID
+-----------------------------------------------------
+
+GET
+http://localhost:8087/students/201
+
+-----------------------------------------------------
+GATEWAY DELETE
+-----------------------------------------------------
+
+DELETE
+http://localhost:8087/students/201
+
+-----------------------------------------------------
+BROWSER UI
+-----------------------------------------------------
+
+Open:
+
+http://localhost:8087
+
+The project contains a dashboard showing:
+- Gateway status
+- Student count
+- Student records
+- Gateway port 8087
+- Student service port 8084
+
+=====================================================
+3. EMPLOYEE DEPARTMENT
+=====================================================
+
+PROJECT:
+employeedepartment
+
+PORT:
+8085
+
+MAIN CLASS:
+com.example.employeedepartment.EmployeedepartmentApplication
+
+PURPOSE / QUESTION:
+Read employee records from employees.txt and return employees
+belonging to a requested department.
+
+-----------------------------------------------------
+IMPORTANT FILE
+-----------------------------------------------------
+
+employees.txt
+
+Current supplied data:
+
+101, bushra, tester, cs, 12000.0
+101, bushra, tester, cs, 12000.0
+102, alina, developer, IT, 30000
+
+The controller expects:
+
+employeeNo, employeeName, designation, department, salary
+
+-----------------------------------------------------
+RUN
+-----------------------------------------------------
+
+cd employeedepartment
+
+./mvnw clean package
+
+./mvnw spring-boot:run
+
+Port:
+
+8085
+
+-----------------------------------------------------
+THUNDER CLIENT
+-----------------------------------------------------
+
+GET
+http://localhost:8085/employees/department/IT
+
+Expected matching employee:
+
+102, alina, developer, IT, 30000
+
+-----------------------------------------------------
+CS DEPARTMENT
+-----------------------------------------------------
+
+GET
+http://localhost:8085/employees/department/cs
+
+Expected:
+101, bushra, tester, cs, 12000.0
+
+-----------------------------------------------------
+CASE INSENSITIVE TEST
+-----------------------------------------------------
+
+GET
+http://localhost:8085/employees/department/it
+
+The controller uses equalsIgnoreCase(), so IT and it both work.
+
+-----------------------------------------------------
+UNKNOWN DEPARTMENT
+-----------------------------------------------------
+
+GET
+http://localhost:8085/employees/department/Finance
+
+Expected:
+
+No employees found in department: Finance
+
+=====================================================
+4. HR MICROSERVICE
+=====================================================
+
+PROJECT:
+hrmicroservice
+
+PORT:
+8086
+
+MAIN CLASS:
+com.example.hrmicroservice.HrMicroserviceApplication
+
+PURPOSE / QUESTION:
+Create an HR microservice to select a candidate for interview
+after validating candidate details.
+
+-----------------------------------------------------
+RUN
+-----------------------------------------------------
+
+cd hrmicroservice
+
+./mvnw clean package
+
+./mvnw spring-boot:run
+
+-----------------------------------------------------
+THUNDER CLIENT — SELECT CANDIDATE
+-----------------------------------------------------
+
+POST
+http://localhost:8086/candidates/select
+
+Header:
+Content-Type: application/json
+
+Body:
+
+{
+  "id": 101,
+  "name": "Vivek Singh",
+  "email": "vivek@example.com",
+  "position": "Software Developer"
+}
+
+Expected:
+
+Dear Vivek Singh, You have been selected for an interview.
+
+-----------------------------------------------------
+INVALID ID
+-----------------------------------------------------
+
+POST
+http://localhost:8086/candidates/select
+
+{
+  "id": 0,
+  "name": "Vivek Singh",
+  "email": "vivek@example.com",
+  "position": "Developer"
+}
+
+Expected:
+
+Candidate ID must be a positive integer.
+
+-----------------------------------------------------
+EMPTY NAME
+-----------------------------------------------------
+
+{
+  "id": 101,
+  "name": "",
+  "email": "vivek@example.com",
+  "position": "Developer"
+}
+
+Expected:
+
+Candidate name cannot be empty.
+
+-----------------------------------------------------
+EMPTY EMAIL
+-----------------------------------------------------
+
+{
+  "id": 101,
+  "name": "Vivek Singh",
+  "email": "",
+  "position": "Developer"
+}
+
+Expected:
+
+Candidate email cannot be empty.
+
+-----------------------------------------------------
+EMPTY POSITION
+-----------------------------------------------------
+
+{
+  "id": 101,
+  "name": "Vivek Singh",
+  "email": "vivek@example.com",
+  "position": ""
+}
+
+Expected:
+
+Position cannot be empty.
+
+=====================================================
+5. EXTRA 2 — INVENTORY
+=====================================================
+
+PROJECT:
+extra2
+
+PORT:
+8089
+
+MAIN CLASS:
+com.example.extra2.Extra2Application
+
+PURPOSE / QUESTION:
+Create an Inventory REST API that:
+- displays all products
+- displays product by ID
+- adds product
+- deletes product
+
+Initial products are:
+
+1  Laptop   10   55000
+2  Keyboard 25   1200
+3  Mouse    30   700
+
+-----------------------------------------------------
+RUN
+-----------------------------------------------------
+
+cd extra2
+
+./mvnw clean package
+
+./mvnw spring-boot:run
+
+-----------------------------------------------------
+GET ALL PRODUCTS
+-----------------------------------------------------
+
+GET
+http://localhost:8089/inventory
+
+-----------------------------------------------------
+GET PRODUCT BY ID
+-----------------------------------------------------
+
+GET
+http://localhost:8089/inventory/1
+
+Expected product:
+
+{
+  "id": 1,
+  "productName": "Laptop",
+  "quantity": 10,
+  "price": 55000
+}
+
+-----------------------------------------------------
+ADD PRODUCT
+-----------------------------------------------------
+
+POST
+http://localhost:8089/inventory
+
+Header:
+Content-Type: application/json
+
+Body:
+
+{
+  "id": 4,
+  "productName": "Monitor",
+  "quantity": 15,
+  "price": 12000
+}
+
+Expected:
+
+Product added successfully
+
+-----------------------------------------------------
+CHECK AGAIN
+-----------------------------------------------------
+
+GET
+http://localhost:8089/inventory
+
+The new Monitor should appear.
+
+-----------------------------------------------------
+DELETE PRODUCT
+-----------------------------------------------------
+
+DELETE
+http://localhost:8089/inventory/4
+
+Expected:
+
+Product deleted successfully
+
+-----------------------------------------------------
+DELETE NON-EXISTING PRODUCT
+-----------------------------------------------------
+
+DELETE
+http://localhost:8089/inventory/99
+
+Expected:
+
+Product not found
+
+=====================================================
+6. CURL TESTING FROM LINUX
+=====================================================
+
+You can test the APIs without Thunder Client.
+
+-----------------------------------------------------
+STUDENT
+-----------------------------------------------------
+
+curl http://localhost:8084/students
+
+POST:
+
+curl -X POST http://localhost:8084/students \
+-H "Content-Type: application/json" \
+-d '{"rollNo":101,"name":"Vivek Singh","email":"vivek@example.com","course":"MSc CS","semester":3}'
+
+GET BY ID:
+
+curl http://localhost:8084/students/101
+
+DELETE:
+
+curl -X DELETE http://localhost:8084/students/101
+
+-----------------------------------------------------
+API GATEWAY
+-----------------------------------------------------
+
+curl http://localhost:8087/students
+
+POST:
+
+curl -X POST http://localhost:8087/students \
+-H "Content-Type: application/json" \
+-d '{"rollNo":201,"name":"Rahul Sharma","email":"rahul@example.com","course":"MCA","semester":2}'
+
+-----------------------------------------------------
+EMPLOYEE DEPARTMENT
+-----------------------------------------------------
+
+curl http://localhost:8085/employees/department/IT
+
+-----------------------------------------------------
+HR
+-----------------------------------------------------
+
+curl -X POST http://localhost:8086/candidates/select \
+-H "Content-Type: application/json" \
+-d '{"id":101,"name":"Vivek Singh","email":"vivek@example.com","position":"Software Developer"}'
+
+-----------------------------------------------------
+INVENTORY
+-----------------------------------------------------
+
+curl http://localhost:8089/inventory
+
+POST:
+
+curl -X POST http://localhost:8089/inventory \
+-H "Content-Type: application/json" \
+-d '{"id":4,"productName":"Monitor","quantity":15,"price":12000}'
+
+DELETE:
+
+curl -X DELETE http://localhost:8089/inventory/4
+
+=====================================================
+7. CHECK ALL RUNNING PORTS
+=====================================================
+
+Linux:
+
+ss -ltnp | grep -E ':8084|:8085|:8086|:8087|:8089'
+
+Expected ports:
+
+8084 = Student Management
+8085 = Employee Department
+8086 = HR Microservice
+8087 = API Gateway
+8089 = Inventory
+
+=====================================================
+8. TEST ALL SERVICES QUICKLY
+=====================================================
+
+Student:
+
+curl http://localhost:8084/students
+
+Employee:
+
+curl http://localhost:8085/employees/department/IT
+
+HR:
+
+curl -X POST http://localhost:8086/candidates/select \
+-H "Content-Type: application/json" \
+-d '{"id":101,"name":"Vivek","email":"vivek@example.com","position":"Developer"}'
+
+Gateway:
+
+curl http://localhost:8087/students
+
+Inventory:
+
+curl http://localhost:8089/inventory
+
+=====================================================
+9. RECOMMENDED RUN ORDER
+=====================================================
+
+For normal Assignment 5:
+
+Terminal 1:
+cd studentmanagement
+./mvnw spring-boot:run
+
+Terminal 2:
+cd api-gateway
+./mvnw spring-boot:run
+
+Terminal 3:
+cd employeedepartment
+./mvnw spring-boot:run
+
+Terminal 4:
+cd hrmicroservice
+./mvnw spring-boot:run
+
+Terminal 5:
+cd extra2
+./mvnw spring-boot:run
+
+Then use Thunder Client.
+
+IMPORTANT:
+API Gateway depends on Student Management.
+
+Therefore:
+8084 MUST be running before 8087 is tested.
+
+=====================================================
+10. THUNDER CLIENT REQUEST LIST
+=====================================================
+
+STUDENT MANAGEMENT — 8084
+
+1. POST   http://localhost:8084/students
+2. GET    http://localhost:8084/students
+3. GET    http://localhost:8084/students/101
+4. DELETE http://localhost:8084/students/101
+
+
+API GATEWAY — 8087
+
+5. POST   http://localhost:8087/students
+6. GET    http://localhost:8087/students
+7. GET    http://localhost:8087/students/201
+8. DELETE http://localhost:8087/students/201
+
+
+EMPLOYEE DEPARTMENT — 8085
+
+9.  GET http://localhost:8085/employees/department/IT
+10. GET http://localhost:8085/employees/department/cs
+11. GET http://localhost:8085/employees/department/Finance
+
+
+HR MICROSERVICE — 8086
+
+12. POST http://localhost:8086/candidates/select
+
+
+INVENTORY — 8089
+
+13. GET    http://localhost:8089/inventory
+14. GET    http://localhost:8089/inventory/1
+15. POST   http://localhost:8089/inventory
+16. DELETE http://localhost:8089/inventory/4
+
+=====================================================
+11. MAIN FILES
+=====================================================
+
+Student:
+studentmanagement/src/main/java/com/example/studentmanagement/StudentmanagementApplication.java
+studentmanagement/src/main/java/com/example/studentmanagement/StudentController.java
+studentmanagement/src/main/java/com/example/studentmanagement/Student.java
+
+Gateway:
+api-gateway/src/main/java/com/example/api_gateway/ApiGatewayApplication.java
+api-gateway/src/main/resources/application.properties
+
+Employee:
+employeedepartment/src/main/java/com/example/employeedepartment/EmployeedepartmentApplication.java
+employeedepartment/src/main/java/com/example/employeedepartment/EmployeeDepartmentController.java
+employeedepartment/employees.txt
+
+HR:
+hrmicroservice/src/main/java/com/example/hrmicroservice/HrMicroserviceApplication.java
+hrmicroservice/src/main/java/com/example/hrmicroservice/HRController.java
+hrmicroservice/src/main/java/com/example/hrmicroservice/Candidate.java
+
+Inventory:
+extra2/src/main/java/com/example/extra2/Extra2Application.java
+extra2/src/main/java/com/example/extra2/InventoryController.java
+extra2/src/main/java/com/example/extra2/Inventory.java
+
+=====================================================
+12. IMPORTANT EXAM/VIVA POINTS
+=====================================================
+
+Student Management:
+- @RestController
+- @PostMapping
+- @GetMapping
+- @DeleteMapping
+- @PathVariable
+- @RequestBody
+- validation
+- in-memory ArrayList
+
+API Gateway:
+- Spring Cloud Gateway
+- centralized routing
+- port 8087
+- routes /students/**
+- forwards to port 8084
+
+Employee Department:
+- REST endpoint
+- reads employees.txt
+- BufferedReader
+- FileReader
+- PathVariable
+- department filtering
+
+HR Microservice:
+- REST microservice
+- @PostMapping
+- @RequestBody
+- candidate validation
+- interview selection response
+
+Inventory:
+- REST API
+- ArrayList
+- CRUD-style operations
+- @RequestBody
+- @PathVariable
+
+=====================================================
+13. STOP APPLICATIONS
+=====================================================
+
+In each terminal press:
+
+Ctrl + C
+
+Or find Java process:
+
+jps
+
+Then stop the relevant process if required.
+
+=====================================================
+END
+=====================================================

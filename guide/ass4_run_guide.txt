@@ -1,0 +1,387 @@
+ASS4 SPRING / SADP ASSIGNMENT - COMPLETE RUN + THUNDER CLIENT GUIDE
+================================================================
+
+ZIP CONTENTS
+-------------
+1. q1         - HR Application (Spring Core, console; NO REST API)
+2. q2         - Task Management REST API (port 8081)
+3. q3         - User Registration + Login REST API (port 8080)
+4. q4         - Employee Flat File REST API (port 8082)
+5. extra_q1   - ERP Product/Sales REST API (port 8083)
+6. extra_q2   - Inventory REST API (port 8084)
+
+LINUX PREREQUISITES
+-------------------
+java -version
+mvn -version
+
+If Maven is not installed (Ubuntu/Debian):
+sudo apt update
+sudo apt install openjdk-11-jdk maven -y
+
+The projects contain Maven Wrapper. You can use ./mvnw instead of mvn.
+
+GENERAL COMMANDS
+----------------
+cd /path/to/ass4/ass4
+chmod +x q1/mvnw q2/mvnw q3/mvnw q4/mvnw extra_q1/mvnw extra_q2/mvnw
+
+For each Spring Boot REST project:
+./mvnw clean package
+./mvnw spring-boot:run
+
+OR after package:
+java -jar target/*.jar
+
+============================================================
+Q1 - HR APPLICATION
+============================================================
+Location: q1
+Type: Spring Core console application
+Main class: com.hr.HRApp
+
+Run:
+cd q1
+./mvnw clean compile
+./mvnw exec:java
+
+Expected operations in code:
+- Add employee 101 Rahul Developer IT 50000
+- Add employee 102 Priya HR Manager HR 60000
+- Add employee 103 Amit Accountant Finance 45000
+- Display all employees
+- Find employee 102
+- Remove employee 103
+- Display employees again
+
+THUNDER CLIENT: NOT APPLICABLE.
+There is no @RestController or HTTP endpoint in Q1.
+
+============================================================
+Q2 - TASK MANAGEMENT REST API
+============================================================
+Location: q2
+Port: 8081
+Base URL: http://localhost:8081/api/tasks
+Main class: com.task.TaskApp
+
+Run:
+cd q2
+./mvnw clean package
+./mvnw spring-boot:run
+
+Endpoints:
+1. POST   http://localhost:8081/api/tasks
+2. GET    http://localhost:8081/api/tasks
+3. GET    http://localhost:8081/api/tasks/{id}
+4. GET    http://localhost:8081/api/tasks/category/{category}
+5. PUT    http://localhost:8081/api/tasks/{id}
+6. DELETE http://localhost:8081/api/tasks/{id}
+
+POST JSON:
+{
+  "title": "Complete Spring Boot Assignment",
+  "category": "College",
+  "dueDate": "2026-10-10",
+  "completed": false
+}
+
+POST another JSON:
+{
+  "title": "Prepare Thunder Client",
+  "category": "College",
+  "dueDate": "2026-10-12",
+  "completed": false
+}
+
+PUT JSON:
+{
+  "title": "Complete Spring Boot Assignment - Updated",
+  "category": "College",
+  "dueDate": "2026-10-15",
+  "completed": true
+}
+
+Thunder Client order:
+POST /api/tasks -> note returned id
+GET /api/tasks
+GET /api/tasks/1
+GET /api/tasks/category/College
+PUT /api/tasks/1
+GET /api/tasks/1
+DELETE /api/tasks/1
+GET /api/tasks
+
+============================================================
+Q3 - USER AUTHENTICATION REST API
+============================================================
+Location: q3
+Port: 8080
+Base URL: http://localhost:8080/api/auth
+Main class: com.auth.AuthApp
+
+Run:
+cd q3
+./mvnw clean package
+./mvnw spring-boot:run
+
+Endpoints:
+1. POST http://localhost:8080/api/auth/register
+2. POST http://localhost:8080/api/auth/login
+
+REGISTER JSON:
+{
+  "username": "vivek123",
+  "email": "vivek@example.com",
+  "password": "password123",
+  "fullName": "Vivek Singh",
+  "phone": "9876543210"
+}
+
+LOGIN JSON:
+{
+  "username": "vivek123",
+  "password": "password123"
+}
+
+Validation:
+- username: required, 3-20 characters
+- email: valid email required
+- password: required, minimum 6 characters
+- fullName: required
+- phone: exactly 10 digits if supplied
+
+Thunder Client order:
+POST /api/auth/register
+POST /api/auth/login
+
+Expected register response:
+{
+  "message": "Registration successful",
+  "userId": 1,
+  "username": "vivek123"
+}
+
+Expected login response:
+{
+  "message": "Login successful",
+  "username": "vivek123",
+  "fullName": "Vivek Singh"
+}
+
+============================================================
+Q4 - EMPLOYEE FLAT FILE REST API
+============================================================
+Location: q4
+Port: 8082
+Base URL: http://localhost:8082/api/employees
+Main class: com.employee.EmpApp
+Data file: employees.txt
+
+Run:
+cd q4
+./mvnw clean package
+./mvnw spring-boot:run
+
+IMPORTANT:
+When the application starts, EmpApp also asks for console input:
+Eno:
+Ename:
+Designation:
+DeptName:
+Salary:
+Enter example values:
+101
+Vivek Singh
+Developer
+IT
+50000
+
+This saves one employee into employees.txt. The REST API remains available on port 8082.
+
+Endpoints:
+1. POST http://localhost:8082/api/employees
+2. GET  http://localhost:8082/api/employees
+3. GET  http://localhost:8082/api/employees/dept/{deptName}
+
+POST JSON:
+{
+  "eno": 101,
+  "ename": "Vivek Singh",
+  "designation": "Developer",
+  "deptName": "IT",
+  "salary": 50000
+}
+
+Another POST JSON:
+{
+  "eno": 102,
+  "ename": "Priya Sharma",
+  "designation": "HR Manager",
+  "deptName": "HR",
+  "salary": 60000
+}
+
+Thunder Client order:
+POST /api/employees
+GET /api/employees
+GET /api/employees/dept/IT
+GET /api/employees/dept/HR
+
+============================================================
+EXTRA Q1 - ERP PRODUCT + SALES API
+============================================================
+Location: extra_q1
+Port: 8083
+Base URL: http://localhost:8083/api/erp
+Main class: com.erp.ErpApp
+
+Run:
+cd extra_q1
+./mvnw clean package
+./mvnw spring-boot:run
+
+PRODUCT ENDPOINTS:
+POST   http://localhost:8083/api/erp/products
+GET    http://localhost:8083/api/erp/products
+GET    http://localhost:8083/api/erp/products/{id}
+PUT    http://localhost:8083/api/erp/products/{id}
+DELETE http://localhost:8083/api/erp/products/{id}
+
+SALES ENDPOINTS:
+POST http://localhost:8083/api/erp/sales
+GET  http://localhost:8083/api/erp/sales
+GET  http://localhost:8083/api/erp/sales/{id}
+
+DASHBOARD:
+GET http://localhost:8083/api/erp/dashboard
+
+PRODUCT POST JSON:
+{
+  "id": 0,
+  "name": "Laptop",
+  "quantity": 10,
+  "price": 55000
+}
+
+PRODUCT PUT JSON:
+{
+  "id": 1,
+  "name": "Laptop Pro",
+  "quantity": 15,
+  "price": 60000
+}
+
+SALES POST JSON:
+{
+  "id": 1,
+  "productId": 1,
+  "quantity": 2,
+  "amount": 0
+}
+
+Recommended test order:
+POST products -> GET products -> GET products/1 -> PUT products/1 -> POST sales -> GET sales -> GET dashboard
+
+============================================================
+EXTRA Q2 - INVENTORY API
+============================================================
+Location: extra_q2
+Port: 8084
+Base URL: http://localhost:8084/api/inventory
+Main class: com.inventory.InvApp
+
+Run:
+cd extra_q2
+./mvnw clean package
+./mvnw spring-boot:run
+
+Endpoints:
+1. POST   http://localhost:8084/api/inventory
+2. GET    http://localhost:8084/api/inventory
+3. GET    http://localhost:8084/api/inventory/{id}
+4. PUT    http://localhost:8084/api/inventory/{id}/stock?quantity=10
+5. DELETE http://localhost:8084/api/inventory/{id}
+6. GET    http://localhost:8084/api/inventory/low-stock?threshold=5
+
+POST JSON:
+{
+  "id": 0,
+  "name": "Keyboard",
+  "category": "Computer Accessories",
+  "stock": 10,
+  "unitPrice": 850
+}
+
+Another POST JSON:
+{
+  "id": 0,
+  "name": "Mouse",
+  "category": "Computer Accessories",
+  "stock": 3,
+  "unitPrice": 500
+}
+
+Stock update example:
+PUT http://localhost:8084/api/inventory/1/stock?quantity=5
+
+Low-stock example:
+GET http://localhost:8084/api/inventory/low-stock?threshold=5
+
+============================================================
+THUNDER CLIENT COMMON SETTINGS
+============================================================
+For POST/PUT:
+Method: POST or PUT
+URL: exact endpoint above
+Headers:
+Content-Type: application/json
+Body -> JSON -> paste the JSON body
+
+For GET:
+Method: GET
+URL: exact endpoint
+No body required.
+
+For DELETE:
+Method: DELETE
+URL: exact endpoint
+No body required.
+
+============================================================
+LINUX QUICK CHECKS
+============================================================
+Check Java:
+java -version
+
+Check Maven:
+mvn -version
+
+Check port 8080:
+curl http://localhost:8080/api/auth/login
+
+Check port 8081:
+curl http://localhost:8081/api/tasks
+
+Check port 8082:
+curl http://localhost:8082/api/employees
+
+Check port 8083:
+curl http://localhost:8083/api/erp/products
+
+Check port 8084:
+curl http://localhost:8084/api/inventory
+
+Check listening ports:
+ss -ltnp | grep -E ':8080|:8081|:8082|:8083|:8084'
+
+Stop a foreground Spring Boot app:
+Ctrl+C
+
+============================================================
+IMPORTANT DATA BEHAVIOUR
+============================================================
+Q2, Q3, extra_q1 and extra_q2 store data in Java memory. Restarting the application clears the in-memory data.
+Q4 stores employees in employees.txt, so Q4 data persists in that file.
+
+END
